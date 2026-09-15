@@ -8,24 +8,13 @@ const io = new Server(server);
 
 app.use(express.static("public"));
 
-
-// ========================================
-// 部屋データ
-// ========================================
-
 const rooms = {};
-
-
-// ========================================
-// ホスト用パスワード
-// ========================================
-
 const HOST_PASSWORD = process.env.HOST_PASSWORD;
 
 
-// ========================================
-// 部屋コード作成
-// ========================================
+/* ========================================
+   部屋コード作成
+======================================== */
 
 function makeRoomId() {
 
@@ -42,8 +31,7 @@ function makeRoomId() {
 
             id += chars[
                 Math.floor(
-                    Math.random() *
-                    chars.length
+                    Math.random() * chars.length
                 )
             ];
         }
@@ -54,9 +42,9 @@ function makeRoomId() {
 }
 
 
-// ========================================
-// 正しい選択肢か確認
-// ========================================
+/* ========================================
+   選択肢チェック
+======================================== */
 
 function validChoice(choice) {
 
@@ -68,9 +56,12 @@ function validChoice(choice) {
 }
 
 
-// ========================================
-// ラウンドをリセット
-// ========================================
+/* ========================================
+   ラウンドリセット
+
+   ※ゲスト画像のA/B設定は
+     ここではリセットしない
+======================================== */
 
 function resetRound(room) {
 
@@ -80,7 +71,6 @@ function resetRound(room) {
     room.hostReady = false;
     room.guestReady = false;
 
-    // 魅了状態
     room.charmed = false;
 
     room.state =
@@ -88,14 +78,13 @@ function resetRound(room) {
 }
 
 
-// ========================================
-// 新しいラウンド開始
-// ========================================
+/* ========================================
+   ラウンド開始
+======================================== */
 
 function startRound(roomId) {
 
-    const room =
-        rooms[roomId];
+    const room = rooms[roomId];
 
     if (
         !room ||
@@ -107,26 +96,27 @@ function startRound(roomId) {
 
     resetRound(room);
 
-
-    // ホスト
     io.to(room.host).emit(
         "roundStart",
         {
             role: "host",
-            charmed: false
+            charmed: false,
+
+            guestImages:
+                room.guestImages
         }
     );
 
-
-    // ゲスト
     io.to(room.guest).emit(
         "roundStart",
         {
             role: "guest",
-            charmed: false
+            charmed: false,
+
+            guestImages:
+                room.guestImages
         }
     );
-
 
     console.log(
         `${roomId}: ラウンド開始`
@@ -134,9 +124,9 @@ function startRound(roomId) {
 }
 
 
-// ========================================
-// Socket.IO
-// ========================================
+/* ========================================
+   Socket.IO
+======================================== */
 
 io.on("connection", socket => {
 
@@ -146,9 +136,9 @@ io.on("connection", socket => {
     );
 
 
-    // ====================================
-    // 部屋作成
-    // ====================================
+    /* ====================================
+       部屋作成
+    ==================================== */
 
     socket.on(
         "createRoom",
@@ -164,7 +154,6 @@ io.on("connection", socket => {
                 return;
             }
 
-
             if (
                 password !==
                 HOST_PASSWORD
@@ -178,10 +167,8 @@ io.on("connection", socket => {
                 return;
             }
 
-
             const roomId =
                 makeRoomId();
-
 
             rooms[roomId] = {
 
@@ -195,17 +182,28 @@ io.on("connection", socket => {
                 hostReady: false,
                 guestReady: false,
 
-                // 魅了状態
                 charmed: false,
 
-                state: "waitingGuest"
+                /*
+                    ゲスト側カードの
+                    A/B状態
+
+                    false = A
+                    true  = B
+                */
+
+                guestImages: {
+
+                    demon: false,
+                    human: false,
+                    angel: false
+                },
+
+                state:
+                    "waitingGuest"
             };
 
-
-            socket.join(
-                roomId
-            );
-
+            socket.join(roomId);
 
             socket.data.roomId =
                 roomId;
@@ -213,14 +211,16 @@ io.on("connection", socket => {
             socket.data.role =
                 "host";
 
-
             socket.emit(
                 "roomCreated",
                 {
-                    roomId
+                    roomId,
+
+                    guestImages:
+                        rooms[roomId]
+                            .guestImages
                 }
             );
-
 
             console.log(
                 `${roomId}: 部屋作成`
@@ -229,25 +229,21 @@ io.on("connection", socket => {
     );
 
 
-    // ====================================
-    // ゲスト参加
-    // ====================================
+    /* ====================================
+       ゲスト参加
+    ==================================== */
 
     socket.on(
         "joinRoom",
         roomId => {
 
             roomId =
-                String(
-                    roomId || ""
-                )
-                .trim()
-                .toUpperCase();
-
+                String(roomId || "")
+                    .trim()
+                    .toUpperCase();
 
             const room =
                 rooms[roomId];
-
 
             if (!room) {
 
@@ -259,7 +255,6 @@ io.on("connection", socket => {
                 return;
             }
 
-
             if (room.guest) {
 
                 socket.emit(
@@ -270,15 +265,10 @@ io.on("connection", socket => {
                 return;
             }
 
-
             room.guest =
                 socket.id;
 
-
-            socket.join(
-                roomId
-            );
-
+            socket.join(roomId);
 
             socket.data.roomId =
                 roomId;
@@ -286,37 +276,99 @@ io.on("connection", socket => {
             socket.data.role =
                 "guest";
 
-
             socket.emit(
                 "roomJoined",
                 {
-                    roomId
+                    roomId,
+
+                    guestImages:
+                        room.guestImages
                 }
             );
 
-
-            io.to(
-                room.host
-            ).emit(
+            io.to(room.host).emit(
                 "guestJoined"
             );
-
 
             console.log(
                 `${roomId}: ゲスト参加`
             );
 
+            startRound(roomId);
+        }
+    );
 
-            startRound(
-                roomId
+
+    /* ====================================
+       ★ ゲスト画像 A/B切り替え
+    ==================================== */
+
+    socket.on(
+        "toggleGuestImage",
+        choice => {
+
+            const roomId =
+                socket.data.roomId;
+
+            const role =
+                socket.data.role;
+
+            if (
+                !roomId ||
+                role !== "host"
+            ) {
+                return;
+            }
+
+            if (
+                !validChoice(choice)
+            ) {
+                return;
+            }
+
+            const room =
+                rooms[roomId];
+
+            if (!room) {
+                return;
+            }
+
+            /*
+                A → B
+                B → A
+            */
+
+            room.guestImages[choice] =
+                !room.guestImages[choice];
+
+            const isB =
+                room.guestImages[choice];
+
+            /*
+                ホストとゲスト両方に
+                現在状態を通知
+            */
+
+            io.to(roomId).emit(
+                "guestImageChanged",
+                {
+                    choice,
+                    isB,
+                    guestImages:
+                        room.guestImages
+                }
+            );
+
+            console.log(
+                `${roomId}: ゲスト ${choice} 画像 → ${isB ? "B" : "A"}`
             );
         }
     );
 
 
-    // ====================================
-    // 💗 魅了
-    // ====================================
+    /* ====================================
+       魅了
+    ==================================== */
 
     socket.on(
         "useCharm",
@@ -327,15 +379,12 @@ io.on("connection", socket => {
                 socket.id
             );
 
-
             const roomId =
                 socket.data.roomId;
 
             const role =
                 socket.data.role;
 
-
-            // 部屋に所属していない
             if (!roomId) {
 
                 console.log(
@@ -345,9 +394,9 @@ io.on("connection", socket => {
                 return;
             }
 
-
-            // ホスト以外
-            if (role !== "host") {
+            if (
+                role !== "host"
+            ) {
 
                 console.log(
                     `${roomId}: 魅了失敗 - ホストではありません`
@@ -356,10 +405,8 @@ io.on("connection", socket => {
                 return;
             }
 
-
             const room =
                 rooms[roomId];
-
 
             if (!room) {
 
@@ -370,8 +417,6 @@ io.on("connection", socket => {
                 return;
             }
 
-
-            // ゲストがいない
             if (!room.guest) {
 
                 socket.emit(
@@ -379,15 +424,9 @@ io.on("connection", socket => {
                     "ゲストがまだ参加していません。"
                 );
 
-                console.log(
-                    `${roomId}: 魅了失敗 - ゲストなし`
-                );
-
                 return;
             }
 
-
-            // ゲスト選択前だけ使用可能
             if (
                 room.state !==
                 "waitingGuestChoice"
@@ -398,15 +437,9 @@ io.on("connection", socket => {
                     "魅了はゲストが選択する前だけ使用できます。"
                 );
 
-                console.log(
-                    `${roomId}: 魅了失敗 - 使用タイミング外`
-                );
-
                 return;
             }
 
-
-            // すでに魅了済み
             if (room.charmed) {
 
                 socket.emit(
@@ -417,51 +450,32 @@ io.on("connection", socket => {
                 return;
             }
 
-
-            // =============================
-            // 魅了成功
-            // =============================
-
             room.charmed = true;
-
 
             console.log(
                 `${roomId}: ホストが魅了を使用`
             );
 
-
-            // ホストへ
-            io.to(
-                room.host
-            ).emit(
+            io.to(room.host).emit(
                 "charmActivated",
                 {
                     role: "host"
                 }
             );
 
-
-            // ゲストへ
-            io.to(
-                room.guest
-            ).emit(
+            io.to(room.guest).emit(
                 "charmActivated",
                 {
                     role: "guest"
                 }
             );
-
-
-            console.log(
-                `${roomId}: ゲストへ魅了通知送信`
-            );
         }
     );
 
 
-    // ====================================
-    // 種族選択
-    // ====================================
+    /* ====================================
+       選択
+    ==================================== */
 
     socket.on(
         "choose",
@@ -473,7 +487,6 @@ io.on("connection", socket => {
             const role =
                 socket.data.role;
 
-
             if (
                 !roomId ||
                 !role
@@ -481,10 +494,8 @@ io.on("connection", socket => {
                 return;
             }
 
-
             const room =
                 rooms[roomId];
-
 
             if (
                 !room ||
@@ -494,9 +505,9 @@ io.on("connection", socket => {
             }
 
 
-            // =============================
-            // ゲスト
-            // =============================
+            /* ============================
+               ゲスト
+            ============================ */
 
             if (
                 role === "guest"
@@ -509,38 +520,24 @@ io.on("connection", socket => {
                     return;
                 }
 
-
-                // -------------------------
-                // 魅了中は魔族禁止
-                // -------------------------
-
                 if (
                     room.charmed &&
                     choice === "demon"
                 ) {
-
-                    console.log(
-                        `${roomId}: 魅了中の魔族選択を拒否`
-                    );
-
 
                     socket.emit(
                         "choiceRejected",
                         "💗 魅了されているため、魔族は選択できません。"
                     );
 
-
                     return;
                 }
-
 
                 room.guestChoice =
                     choice;
 
-
                 room.state =
                     "waitingHostChoice";
-
 
                 socket.emit(
                     "choiceAccepted",
@@ -549,29 +546,22 @@ io.on("connection", socket => {
                     }
                 );
 
-
-                // ホストにだけ
-                // ゲストの選択を見せる
-                io.to(
-                    room.host
-                ).emit(
+                io.to(room.host).emit(
                     "guestChoice",
                     choice
                 );
-
 
                 console.log(
                     `${roomId}: ゲストが ${choice} を選択`
                 );
 
-
                 return;
             }
 
 
-            // =============================
-            // ホスト
-            // =============================
+            /* ============================
+               ホスト
+            ============================ */
 
             if (
                 role === "host"
@@ -584,21 +574,17 @@ io.on("connection", socket => {
                     return;
                 }
 
-
                 if (
                     !room.guestChoice
                 ) {
                     return;
                 }
 
-
                 room.hostChoice =
                     choice;
 
-
                 room.state =
                     "result";
-
 
                 socket.emit(
                     "choiceAccepted",
@@ -607,19 +593,18 @@ io.on("connection", socket => {
                     }
                 );
 
-
                 console.log(
                     `${roomId}: ホストが ${choice} を選択`
                 );
 
 
-                // -------------------------
-                // ホストへ結果
-                // -------------------------
+                /*
+                    結果送信
 
-                io.to(
-                    room.host
-                ).emit(
+                    guestImagesも一緒に送る
+                */
+
+                io.to(room.host).emit(
                     "result",
                     {
                         you:
@@ -629,18 +614,14 @@ io.on("connection", socket => {
                             room.guestChoice,
 
                         charmed:
-                            room.charmed
+                            room.charmed,
+
+                        guestImages:
+                            room.guestImages
                     }
                 );
 
-
-                // -------------------------
-                // ゲストへ結果
-                // -------------------------
-
-                io.to(
-                    room.guest
-                ).emit(
+                io.to(room.guest).emit(
                     "result",
                     {
                         you:
@@ -650,7 +631,10 @@ io.on("connection", socket => {
                             room.hostChoice,
 
                         charmed:
-                            room.charmed
+                            room.charmed,
+
+                        guestImages:
+                            room.guestImages
                     }
                 );
             }
@@ -658,9 +642,9 @@ io.on("connection", socket => {
     );
 
 
-    // ====================================
-    // 再戦準備
-    // ====================================
+    /* ====================================
+       再戦
+    ==================================== */
 
     socket.on(
         "rematchReady",
@@ -672,7 +656,6 @@ io.on("connection", socket => {
             const role =
                 socket.data.role;
 
-
             if (
                 !roomId ||
                 !role
@@ -680,19 +663,16 @@ io.on("connection", socket => {
                 return;
             }
 
-
             const room =
                 rooms[roomId];
-
 
             if (
                 !room ||
                 room.state !==
-                "result"
+                    "result"
             ) {
                 return;
             }
-
 
             if (
                 role === "host"
@@ -702,7 +682,6 @@ io.on("connection", socket => {
                     true;
             }
 
-
             if (
                 role === "guest"
             ) {
@@ -711,10 +690,7 @@ io.on("connection", socket => {
                     true;
             }
 
-
-            io.to(
-                roomId
-            ).emit(
+            io.to(roomId).emit(
                 "rematchStatus",
                 {
                     hostReady:
@@ -725,21 +701,16 @@ io.on("connection", socket => {
                 }
             );
 
-
-            // 両方準備完了
             if (
                 room.hostReady &&
                 room.guestReady
             ) {
 
                 setTimeout(
-                    () => {
-
+                    () =>
                         startRound(
                             roomId
-                        );
-
-                    },
+                        ),
                     500
                 );
             }
@@ -747,9 +718,9 @@ io.on("connection", socket => {
     );
 
 
-    // ====================================
-    // 切断
-    // ====================================
+    /* ====================================
+       切断
+    ==================================== */
 
     socket.on(
         "disconnect",
@@ -761,7 +732,6 @@ io.on("connection", socket => {
             const role =
                 socket.data.role;
 
-
             if (
                 !roomId ||
                 !role
@@ -769,61 +739,45 @@ io.on("connection", socket => {
                 return;
             }
 
-
             const room =
                 rooms[roomId];
-
 
             if (!room) {
                 return;
             }
 
 
-            // =============================
-            // ホスト退出
-            // =============================
+            /* ホスト退出 */
 
             if (
                 role === "host"
             ) {
 
-                if (
-                    room.guest
-                ) {
+                if (room.guest) {
 
-                    io.to(
-                        room.guest
-                    ).emit(
+                    io.to(room.guest).emit(
                         "roomClosed",
                         "ホストが退出したため、部屋が終了しました。"
                     );
                 }
 
-
-                delete rooms[
-                    roomId
-                ];
-
+                delete rooms[roomId];
 
                 console.log(
                     `${roomId}: 部屋削除`
                 );
 
-
                 return;
             }
 
 
-            // =============================
-            // ゲスト退出
-            // =============================
+            /* ゲスト退出 */
 
             if (
                 role === "guest"
             ) {
 
-                room.guest =
-                    null;
+                room.guest = null;
 
                 room.guestChoice =
                     null;
@@ -843,13 +797,9 @@ io.on("connection", socket => {
                 room.state =
                     "waitingGuest";
 
-
-                io.to(
-                    room.host
-                ).emit(
+                io.to(room.host).emit(
                     "guestLeft"
                 );
-
 
                 console.log(
                     `${roomId}: ゲスト退出`
@@ -860,13 +810,12 @@ io.on("connection", socket => {
 });
 
 
-// ========================================
-// サーバー起動
-// ========================================
+/* ========================================
+   サーバー起動
+======================================== */
 
 const PORT =
     process.env.PORT || 3000;
-
 
 server.listen(
     PORT,
@@ -879,7 +828,6 @@ server.listen(
         console.log(
             `http://localhost:${PORT}`
         );
-
 
         if (!HOST_PASSWORD) {
 
