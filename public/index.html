@@ -52,11 +52,8 @@ body {
         url("/images/background.png");
 
     background-size: cover;
-
     background-position: center;
-
     background-repeat: no-repeat;
-
     background-attachment: fixed;
 }
 
@@ -109,8 +106,7 @@ body::after {
             rgba(20, 3, 20, 0.12)
         );
 
-    transition:
-        opacity 0.6s ease;
+    transition: opacity 0.6s ease;
 }
 
 
@@ -343,7 +339,7 @@ input {
 
 
 /* ========================================
-   ★通算金額
+   通算金額
 ======================================== */
 
 .money-panel {
@@ -993,10 +989,6 @@ input {
 }
 
 
-/* ========================================
-   ★金額変動演出
-======================================== */
-
 #moneyResult {
 
     display: none;
@@ -1015,19 +1007,16 @@ input {
 
 
 .money-plus {
-
     color: #74f0a7;
 }
 
 
 .money-minus {
-
     color: #ff7089;
 }
 
 
 .money-zero {
-
     color: #dddddd;
 }
 
@@ -1062,6 +1051,7 @@ input {
 
 /* ========================================
    スマホ
+   基本は従来の横並び
 ======================================== */
 
 @media (max-width: 700px) {
@@ -1117,6 +1107,95 @@ input {
     }
 }
 
+
+/* ========================================
+   ★スマホ + ゲストだけ縦並び
+======================================== */
+
+@media (max-width: 700px) {
+
+    body.guest-mode .container {
+
+        width: 100%;
+
+        padding:
+            0 10px;
+    }
+
+
+    body.guest-mode .choices {
+
+        display: flex;
+
+        flex-direction: column;
+
+        align-items: center;
+
+        width: 100%;
+
+        gap: 18px;
+
+        margin-top: 18px;
+
+        padding-bottom: 35px;
+    }
+
+
+    body.guest-mode .choice {
+
+        width:
+            min(390px, 96%);
+
+        min-width: 0;
+
+        padding:
+            12px 10px 14px;
+
+        border-radius: 22px;
+    }
+
+
+    body.guest-mode .choice img {
+
+        width: 100%;
+
+        height:
+            min(390px, 85vw);
+
+        object-fit: contain;
+    }
+
+
+    body.guest-mode .choice-name {
+
+        margin-top: 2px;
+
+        font-size: 25px;
+    }
+
+
+    body.guest-mode .choice-hand {
+
+        margin-top: 2px;
+
+        font-size: 15px;
+    }
+
+
+    body.guest-mode #status {
+
+        font-size: 18px;
+
+        margin-bottom: 12px;
+    }
+
+
+    body.guest-mode .money-panel {
+
+        margin-bottom: 14px;
+    }
+}
+
 </style>
 
 </head>
@@ -1143,10 +1222,6 @@ input {
 </div>
 
 
-<!-- =====================================
-     メニュー
-===================================== -->
-
 <section
     id="menuScreen"
     class="screen active"
@@ -1171,10 +1246,6 @@ input {
 
 </section>
 
-
-<!-- =====================================
-     部屋作成
-===================================== -->
 
 <section
     id="createScreen"
@@ -1211,10 +1282,6 @@ input {
 
 </section>
 
-
-<!-- =====================================
-     参加
-===================================== -->
 
 <section
     id="joinScreen"
@@ -1253,10 +1320,6 @@ input {
 </section>
 
 
-<!-- =====================================
-     ゲーム
-===================================== -->
-
 <section
     id="gameScreen"
     class="screen"
@@ -1280,8 +1343,6 @@ input {
     </div>
 
 
-    <!-- ★通算金額 -->
-
     <div class="money-panel">
 
         <div
@@ -1302,10 +1363,6 @@ input {
         接続待ち...
     </div>
 
-
-    <!-- =================================
-         ホスト専用
-    ================================== -->
 
     <div id="hostPanel">
 
@@ -1381,10 +1438,6 @@ input {
 
     </div>
 
-
-    <!-- =================================
-         カード
-    ================================== -->
 
     <div class="choices">
 
@@ -1463,10 +1516,6 @@ input {
 
 </div>
 
-
-<!-- =====================================
-     バトル画面
-===================================== -->
 
 <div id="battleOverlay">
 
@@ -1548,10 +1597,6 @@ input {
 
 const socket = io();
 
-
-/* ========================================
-   DOM
-======================================== */
 
 const screens =
     document.querySelectorAll(".screen");
@@ -1709,10 +1754,6 @@ const charmFlash =
     );
 
 
-/* ========================================
-   状態
-======================================== */
-
 let myRole =
     null;
 
@@ -1747,10 +1788,6 @@ let guestImages = {
 };
 
 
-/* ========================================
-   画面
-======================================== */
-
 function showScreen(screen) {
 
     screens.forEach(
@@ -1768,10 +1805,6 @@ function showScreen(screen) {
     );
 }
 
-
-/* ========================================
-   金額表示
-======================================== */
 
 function formatMoney(amount) {
 
@@ -1812,10 +1845,6 @@ function updateMoneyDisplay() {
         );
 }
 
-
-/* ========================================
-   メニュー
-======================================== */
 
 document
     .getElementById(
@@ -1883,10 +1912,6 @@ document
     );
 
 
-/* ========================================
-   部屋作成
-======================================== */
-
 document
     .getElementById(
         "createRoomButton"
@@ -1915,10 +1940,6 @@ document
         }
     );
 
-
-/* ========================================
-   部屋参加
-======================================== */
 
 document
     .getElementById(
@@ -1951,10 +1972,6 @@ document
     );
 
 
-/* ========================================
-   URL部屋コード
-======================================== */
-
 const urlParams =
     new URLSearchParams(
         window.location.search
@@ -1980,10 +1997,6 @@ if (roomFromUrl) {
     );
 }
 
-
-/* ========================================
-   選択
-======================================== */
 
 choices.forEach(
     choice => {
@@ -2041,10 +2054,6 @@ choices.forEach(
 );
 
 
-/* ========================================
-   無効
-======================================== */
-
 function disableChoices() {
 
     choices.forEach(
@@ -2057,10 +2066,6 @@ function disableChoices() {
     );
 }
 
-
-/* ========================================
-   有効
-======================================== */
 
 function enableChoices() {
 
@@ -2094,10 +2099,6 @@ function enableChoices() {
     }
 }
 
-
-/* ========================================
-   ゲスト画像
-======================================== */
 
 function getGuestNormalImage(
     choice
@@ -2144,10 +2145,6 @@ function getGuestNormalImage(
 }
 
 
-/* ========================================
-   通常画像
-======================================== */
-
 function setNormalImages() {
 
 
@@ -2191,10 +2188,6 @@ function setNormalImages() {
 }
 
 
-/* ========================================
-   魅了画像
-======================================== */
-
 function setCharmedImages() {
 
 
@@ -2219,10 +2212,6 @@ function setCharmedImages() {
         "/images/angel_charmed.png";
 }
 
-
-/* ========================================
-   A/Bボタン
-======================================== */
 
 imageChangeButtons.forEach(
     button => {
@@ -2332,10 +2321,6 @@ function setHostPreparationButtons(
 }
 
 
-/* ========================================
-   A/B変更受信
-======================================== */
-
 socket.on(
     "guestImageChanged",
     data => {
@@ -2389,10 +2374,6 @@ socket.on(
 );
 
 
-/* ========================================
-   ★選択許可ボタン
-======================================== */
-
 allowChoiceButton
     .addEventListener(
         "click",
@@ -2420,10 +2401,6 @@ allowChoiceButton
         }
     );
 
-
-/* ========================================
-   選択許可受信
-======================================== */
 
 socket.on(
     "guestChoiceAllowed",
@@ -2479,10 +2456,6 @@ socket.on(
     }
 );
 
-
-/* ========================================
-   VS画像
-======================================== */
 
 function getBattleImage(
     choice,
@@ -2551,10 +2524,6 @@ function getBattleImage(
 }
 
 
-/* ========================================
-   名前
-======================================== */
-
 function getChoiceName(choice) {
 
 
@@ -2582,10 +2551,6 @@ function getChoiceName(choice) {
     return "";
 }
 
-
-/* ========================================
-   自分視点の勝敗
-======================================== */
 
 function getResult(
     you,
@@ -2630,10 +2595,6 @@ function getResult(
 }
 
 
-/* ========================================
-   魅了
-======================================== */
-
 charmButton.addEventListener(
     "click",
     () => {
@@ -2660,10 +2621,6 @@ charmButton.addEventListener(
     }
 );
 
-
-/* ========================================
-   ハート
-======================================== */
 
 function createHeart() {
 
@@ -2838,10 +2795,6 @@ function stopAmbientHearts() {
 }
 
 
-/* ========================================
-   魅了解除
-======================================== */
-
 function stopCharmMode() {
 
 
@@ -2871,10 +2824,6 @@ function stopCharmMode() {
 }
 
 
-/* ========================================
-   部屋作成成功
-======================================== */
-
 socket.on(
     "roomCreated",
     data => {
@@ -2882,6 +2831,17 @@ socket.on(
 
         myRole =
             "host";
+
+
+        /*
+            ★ホストには guest-mode を付けない
+            スマホでも従来の横並び
+        */
+        document.body
+            .classList
+            .remove(
+                "guest-mode"
+            );
 
 
         currentRoomId =
@@ -2942,10 +2902,6 @@ socket.on(
 );
 
 
-/* ========================================
-   作成エラー
-======================================== */
-
 socket.on(
     "createRoomError",
     message => {
@@ -2956,10 +2912,6 @@ socket.on(
 );
 
 
-/* ========================================
-   参加成功
-======================================== */
-
 socket.on(
     "roomJoined",
     data => {
@@ -2967,6 +2919,17 @@ socket.on(
 
         myRole =
             "guest";
+
+
+        /*
+            ★ここが今回のポイント
+            ゲストにだけ専用クラスを付ける
+        */
+        document.body
+            .classList
+            .add(
+                "guest-mode"
+            );
 
 
         currentRoomId =
@@ -3019,10 +2982,6 @@ socket.on(
 );
 
 
-/* ========================================
-   エラー
-======================================== */
-
 socket.on(
     "joinRoomError",
     message => {
@@ -3033,10 +2992,6 @@ socket.on(
 );
 
 
-/* ========================================
-   ゲスト参加
-======================================== */
-
 socket.on(
     "guestJoined",
     () => {
@@ -3046,10 +3001,6 @@ socket.on(
     }
 );
 
-
-/* ========================================
-   ラウンド開始
-======================================== */
 
 socket.on(
     "roundStart",
@@ -3149,10 +3100,6 @@ socket.on(
 );
 
 
-/* ========================================
-   ゲスト選択
-======================================== */
-
 socket.on(
     "guestChoice",
     choice => {
@@ -3178,10 +3125,6 @@ socket.on(
 );
 
 
-/* ========================================
-   魅了発動
-======================================== */
-
 socket.on(
     "charmActivated",
     data => {
@@ -3205,11 +3148,6 @@ socket.on(
 
             setCharmedImages();
 
-
-            /*
-                まだホスト許可前なので
-                カードは有効化しない
-            */
 
             if (
                 guestCanChoose
@@ -3276,10 +3214,6 @@ socket.on(
 );
 
 
-/* ========================================
-   選択拒否
-======================================== */
-
 socket.on(
     "choiceRejected",
     message => {
@@ -3299,10 +3233,6 @@ socket.on(
     }
 );
 
-
-/* ========================================
-   選択受付
-======================================== */
 
 socket.on(
     "choiceAccepted",
@@ -3330,10 +3260,6 @@ socket.on(
     }
 );
 
-
-/* ========================================
-   結果
-======================================== */
 
 socket.on(
     "result",
@@ -3407,10 +3333,6 @@ socket.on(
     }
 );
 
-
-/* ========================================
-   バトル演出
-======================================== */
 
 function showBattle(
     result,
@@ -3538,10 +3460,6 @@ function showBattle(
                                 }
 
 
-                                /*
-                                    ★ゲスト基準の金額
-                                */
-
                                 moneyResult.className =
                                     "";
 
@@ -3624,10 +3542,6 @@ function showBattle(
 }
 
 
-/* ========================================
-   再戦
-======================================== */
-
 rematchButton
     .addEventListener(
         "click",
@@ -3674,10 +3588,6 @@ socket.on(
 );
 
 
-/* ========================================
-   ゲスト退出
-======================================== */
-
 socket.on(
     "guestLeft",
     () => {
@@ -3721,10 +3631,6 @@ socket.on(
     }
 );
 
-
-/* ========================================
-   部屋終了
-======================================== */
 
 socket.on(
     "roomClosed",
