@@ -10,9 +10,7 @@
     content="width=device-width, initial-scale=1.0"
 >
 
-<title>
-    三界じゃんけん
-</title>
+<title>三界じゃんけん</title>
 
 <style>
 
@@ -118,13 +116,11 @@ body::after {
             rgba(20, 3, 20, 0.12)
         );
 
-    transition:
-        opacity 0.6s ease;
+    transition: opacity 0.6s ease;
 }
 
 
 body.charmed::after {
-
     opacity: 1;
 }
 
@@ -163,11 +159,8 @@ h1 {
     letter-spacing: 0.08em;
 
     text-shadow:
-        0 0 10px
-        rgba(180, 120, 255, 0.7),
-
-        0 0 30px
-        rgba(120, 70, 255, 0.35);
+        0 0 10px rgba(180, 120, 255, 0.7),
+        0 0 30px rgba(120, 70, 255, 0.35);
 }
 
 
@@ -204,8 +197,7 @@ button {
 
     border-radius: 14px;
 
-    padding:
-        14px 25px;
+    padding: 14px 25px;
 
     font-size: 17px;
 
@@ -705,43 +697,6 @@ input:focus {
 
 
 /* ========================================
-   BGMボタン
-======================================== */
-
-#bgmButton {
-
-    position: fixed;
-
-    right: 18px;
-
-    bottom: 18px;
-
-    z-index: 1000;
-
-    padding:
-        10px 16px;
-
-    font-size: 14px;
-
-    border-radius: 999px;
-
-    background:
-        rgba(10, 5, 15, 0.75);
-
-    border:
-        1px solid
-        rgba(255, 255, 255, 0.18);
-
-    backdrop-filter:
-        blur(10px);
-
-    box-shadow:
-        0 5px 20px
-        rgba(0, 0, 0, 0.4);
-}
-
-
-/* ========================================
    魅了
 ======================================== */
 
@@ -1079,19 +1034,6 @@ input:focus {
     .image-change-buttons {
         flex-direction: column;
     }
-
-
-    #bgmButton {
-
-        right: 10px;
-
-        bottom: 10px;
-
-        padding:
-            8px 12px;
-
-        font-size: 12px;
-    }
 }
 
 </style>
@@ -1102,29 +1044,8 @@ input:focus {
 <body>
 
 
-<!-- =====================================
-     BGM
-===================================== -->
-
-<audio
-    id="bgm"
-    src="/audio/bgm.mp3"
-    loop
-    preload="auto"
-></audio>
-
-
-<button id="bgmButton">
-
-    🔊 BGM ON
-
-</button>
-
-
 <div id="charmFlash">
-
     💗 魅了 💗
-
 </div>
 
 
@@ -1137,9 +1058,7 @@ input:focus {
 
 
 <div class="subtitle">
-
     魔族・人間・天使
-
 </div>
 
 
@@ -1277,9 +1196,7 @@ input:focus {
 
 
     <div id="status">
-
         接続待ち...
-
     </div>
 
 
@@ -1296,16 +1213,12 @@ input:focus {
 
 
         <div id="guestChoiceText">
-
             まだ選んでいません
-
         </div>
 
 
         <button id="charmButton">
-
             💗 魅了する
-
         </button>
 
 
@@ -1316,9 +1229,7 @@ input:focus {
 
 
             <div class="guest-image-title">
-
                 ゲスト側のカード画像変更
-
             </div>
 
 
@@ -1329,9 +1240,7 @@ input:focus {
                     class="image-change-button"
                     data-image-choice="demon"
                 >
-
                     😈 魔族：A
-
                 </button>
 
 
@@ -1339,9 +1248,7 @@ input:focus {
                     class="image-change-button"
                     data-image-choice="human"
                 >
-
                     👤 人間：A
-
                 </button>
 
 
@@ -1349,9 +1256,7 @@ input:focus {
                     class="image-change-button"
                     data-image-choice="angel"
                 >
-
                     👼 天使：A
-
                 </button>
 
 
@@ -1359,9 +1264,7 @@ input:focus {
 
 
             <div id="guestImageInfo">
-
                 ボタンを押すとゲスト側だけ A ⇄ B が切り替わります
-
             </div>
 
 
@@ -1461,9 +1364,7 @@ input:focus {
 
 
 <div id="countdown">
-
     3
-
 </div>
 
 
@@ -1486,9 +1387,7 @@ input:focus {
 
 
     <div class="vs-text">
-
         VS
-
     </div>
 
 
@@ -1516,9 +1415,7 @@ input:focus {
 <div id="rematchArea">
 
     <button id="rematchButton">
-
         もう一度
-
     </button>
 
     <div id="rematchStatus"></div>
@@ -1723,132 +1620,6 @@ const charmFlash =
 
 
 /* ========================================
-   ★ BGM
-======================================== */
-
-const bgm =
-    document.getElementById(
-        "bgm"
-    );
-
-
-const bgmButton =
-    document.getElementById(
-        "bgmButton"
-    );
-
-
-/*
-    BGM音量
-
-    0.12 = 12%
-*/
-
-bgm.volume = 0.01;
-
-
-let bgmStarted = false;
-
-let bgmEnabled = true;
-
-
-/* ========================================
-   BGM開始
-======================================== */
-
-function startBgm() {
-
-    if (
-        !bgmEnabled
-    ) {
-        return;
-    }
-
-
-    if (
-        bgmStarted &&
-        !bgm.paused
-    ) {
-        return;
-    }
-
-
-    bgm.play()
-        .then(() => {
-
-            bgmStarted = true;
-
-            bgmButton.textContent =
-                "🔊 BGM ON";
-        })
-        .catch(() => {
-
-            /*
-                ブラウザが自動再生を
-                ブロックした場合は
-                次のクリックで再試行
-            */
-
-        });
-}
-
-
-/* ========================================
-   BGM ON / OFF
-======================================== */
-
-bgmButton.addEventListener(
-    "click",
-    event => {
-
-        event.stopPropagation();
-
-
-        if (
-            bgmEnabled
-        ) {
-
-            bgmEnabled = false;
-
-            bgm.pause();
-
-            bgmButton.textContent =
-                "🔇 BGM OFF";
-
-        } else {
-
-            bgmEnabled = true;
-
-            startBgm();
-
-            bgmButton.textContent =
-                "🔊 BGM ON";
-        }
-    }
-);
-
-
-/*
-    最初のユーザー操作で
-    BGMを開始する
-*/
-
-document.addEventListener(
-    "click",
-    () => {
-
-        if (
-            bgmEnabled &&
-            !bgmStarted
-        ) {
-
-            startBgm();
-        }
-    }
-);
-
-
-/* ========================================
    状態
 ======================================== */
 
@@ -1906,8 +1677,6 @@ document
             createError.textContent =
                 "";
 
-            startBgm();
-
             showScreen(
                 createScreen
             );
@@ -1925,8 +1694,6 @@ document
 
             joinError.textContent =
                 "";
-
-            startBgm();
 
             showScreen(
                 joinScreen
@@ -1977,8 +1744,6 @@ document
         "click",
         () => {
 
-            startBgm();
-
 
             const password =
                 document
@@ -2011,8 +1776,6 @@ document
     .addEventListener(
         "click",
         () => {
-
-            startBgm();
 
 
             const id =
@@ -2229,10 +1992,6 @@ function getGuestNormalImage(
 function setNormalImages() {
 
 
-    /*
-        ホスト
-    */
-
     if (
         myRole === "host"
     ) {
@@ -2252,10 +2011,6 @@ function setNormalImages() {
         return;
     }
 
-
-    /*
-        ゲスト
-    */
 
     demonImage.src =
         getGuestNormalImage(
@@ -2465,10 +2220,6 @@ function getBattleImage(
 ) {
 
 
-    /*
-        ホスト
-    */
-
     if (
         role === "host"
     ) {
@@ -2498,10 +2249,6 @@ function getBattleImage(
         }
     }
 
-
-    /*
-        ゲスト
-    */
 
     if (
         role === "guest"
