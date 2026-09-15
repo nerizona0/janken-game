@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+>
+
+<title>三界じゃんけん</title>
+
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+
+body {
+
+    font-family:
+        Arial,
+        "Yu Gothic",
+        "Meiryo",
+        sans-serif;
+
+    margin: 0;
+
+    padding: 25px 15px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #17151f,
+            #272238
+        );
+
+    color: white;
+
+    min-height: 100vh;
+}
+
+
+.game {
+
+    max-width: 800px;
+
+    margin: auto;
+
+    text-align: center;
+}
+
+
+h1 {
+
+    font-size: 32px;
+
+    margin-bottom: 5px;
+}
+
+
+.subtitle {
+
+    color: #bbb;
+
+    margin-bottom: 30px;
+}
+
+
+.room-box {
+
+    background: rgba(255,255,255,0.08);
+
+    border-radius: 15px;
+
+    padding: 15px;
+
+    margin-bottom: 20px;
+}
+
+
+#role {
+
+    font-weight: bold;
+
+    margin-top: 10px;
+
+    color: #ffd86b;
+}
+
+
+#status {
+
+    font-size: 20px;
+
+    margin: 25px 0;
+}
+
+
+/* =========================
+   ホスト専用表示
+========================= */
+
+#hostInfo {
+
+    display: none;
+
+    background: rgba(255, 215, 80, 0.12);
+
+    border: 2px solid #d7ad45;
+
+    border-radius: 15px;
+
+    padding: 15px;
+
+    margin: 20px 0;
+}
+
+
+#guestChoiceDisplay {
+
+    font-size: 25px;
+
+    font-weight: bold;
+
+    margin-top: 10px;
+}
+
+
+/* =========================
+   選択カード
+========================= */
+
+.choices {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 15px;
+
+    margin-top: 20px;
+}
+
+
+.choice {
+
+    border: 2px solid #555;
+
+    border-radius: 18px;
+
+    background: #252331;
+
+    color: white;
+
+    padding: 15px 8px;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.15s,
+        border-color 0.15s,
+        background 0.15s;
+
+    min-height: 220px;
+}
+
+
+.choice:hover:not(:disabled) {
+
+    transform: translateY(-5px);
+
+    border-color: white;
+
+    background: #302d40;
+}
+
+
+.choice:disabled {
+
+    opacity: 0.45;
+
+    cursor: not-allowed;
+}
+
+
+.character-image {
+
+    width: 100%;
+
+    height: 130px;
+
+    object-fit: contain;
+
+    margin-bottom: 8px;
+}
+
+
+.fallback {
+
+    font-size: 75px;
+
+    height: 130px;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+}
+
+
+.name {
+
+    display: block;
+
+    font-size: 22px;
+
+    font-weight: bold;
+}
+
+
+.old-name {
+
+    display: block;
+
+    color: #aaa;
+
+    font-size: 13px;
+
+    margin-top: 5px;
+}
+
+
+/* =========================
+   結果
+========================= */
+
+#result {
+
+    font-size: 25px;
+
+    font-weight: bold;
+
+    margin-top: 30px;
+
+    min-height: 80px;
+}
+
+
+.result-characters {
+
+    font-size: 45px;
+
+    margin-bottom: 10px;
+}
+
+
+/* =========================
+   スマホ
+========================= */
+
+@media (max-width: 600px) {
+
+    body {
+
+        padding:
+            15px 10px;
+    }
+
+
+    h1 {
+
+        font-size: 26px;
+    }
+
+
+    .choices {
+
+        gap: 7px;
+    }
+
+
+    .choice {
+
+        min-height: 170px;
+
+        padding: 10px 3px;
+    }
+
+
+    .fallback {
+
+        font-size: 50px;
+
+        height: 90px;
+    }
+
+
+    .character-image {
+
+        height: 90px;
+    }
+
+
+    .name {
+
+        font-size: 18px;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="game">
+
+
+    <h1>三界じゃんけん</h1>
+
+    <div class="subtitle">
+        魔族・人間・天使
+    </div>
+
+
+    <div class="room-box">
+
+        部屋：
+        <strong id="room"></strong>
+
+        <div id="role">
+            接続中…
+        </div>
+
+    </div>
+
+
+    <div id="status">
+        サーバーに接続しています…
+    </div>
+
+
+    <!-- ホストにしか表示されない -->
+
+    <div id="hostInfo">
+
+        👑 ホスト専用情報
+
+        <div id="guestChoiceDisplay">
+            ゲストはまだ選択していません
+        </div>
+
+    </div>
+
+
+
+    <div class="choices">
+
+
+        <!-- 魔族 -->
+
+        <button
+            class="choice"
+            data-choice="demon"
+            disabled
+        >
+
+            <img
+                src="images/demon.png"
+                class="character-image"
+                alt="魔族"
+                onerror="
+                    this.style.display='none';
+                    this.nextElementSibling.style.display='flex';
+                "
+            >
+
+            <div
+                class="fallback"
+                style="display:none;"
+            >
+                😈
+            </div>
+
+            <span class="name">
+                魔族
+            </span>
+
+            <span class="old-name">
+                グー
+            </span>
+
+        </button>
+
+
+
+        <!-- 人間 -->
+
+        <button
+            class="choice"
+            data-choice="human"
+            disabled
+        >
+
+            <img
+                src="images/human.png"
+                class="character-image"
+                alt="人間"
+                onerror="
+                    this.style.display='none';
+                    this.nextElementSibling.style.display='flex';
+                "
+            >
+
+            <div
+                class="fallback"
+                style="display:none;"
+            >
+                ⚔️
+            </div>
+
+            <span class="name">
+                人間
+            </span>
+
+            <span class="old-name">
+                チョキ
+            </span>
+
+        </button>
+
+
+
+        <!-- 天使 -->
+
+        <button
+            class="choice"
+            data-choice="angel"
+            disabled
+        >
+
+            <img
+                src="images/angel.png"
+                class="character-image"
+                alt="天使"
+                onerror="
+                    this.style.display='none';
+                    this.nextElementSibling.style.display='flex';
+                "
+            >
+
+            <div
+                class="fallback"
+                style="display:none;"
+            >
+                👼
+            </div>
+
+            <span class="name">
+                天使
+            </span>
+
+            <span class="old-name">
+                パー
+            </span>
+
+        </button>
+
+
+    </div>
+
+
+    <div id="result"></div>
+
+
+</div>
+
+
+
+<script src="/socket.io/socket.io.js"></script>
+
+
+<script>
+
+const socket = io();
+
+
+const statusText =
+    document.getElementById("status");
+
+const resultText =
+    document.getElementById("result");
+
+const roomText =
+    document.getElementById("room");
+
+const roleText =
+    document.getElementById("role");
+
+const hostInfo =
+    document.getElementById("hostInfo");
+
+const guestChoiceDisplay =
+    document.getElementById(
+        "guestChoiceDisplay"
+    );
+
+const buttons =
+    document.querySelectorAll(".choice");
+
+
+let myRole = null;
+
+
+// =========================
+// 部屋番号
+// =========================
+
+const params =
+    new URLSearchParams(
+        window.location.search
+    );
+
+let roomId =
+    params.get("room");
+
+
+if (!roomId) {
+
+    roomId =
+        Math.random()
+            .toString(36)
+            .substring(2, 8)
+            .toUpperCase();
+
+
+    window.history.replaceState(
+        {},
+        "",
+        "?room=" + roomId
+    );
+
+}
+
+
+roomText.textContent = roomId;
+
+
+// 部屋に参加
+
+socket.emit(
+    "joinRoom",
+    roomId
+);
+
+
+// =========================
+// ホスト / ゲスト判定
+// =========================
+
+socket.on("role", (role) => {
+
+    myRole = role;
+
+
+    if (role === "host") {
+
+        roleText.textContent =
+            "👑 あなたはホストです";
+
+        hostInfo.style.display =
+            "block";
+
+    }
+
+
+    if (role === "guest") {
+
+        roleText.textContent =
+            "あなたはゲストです";
+
+        hostInfo.style.display =
+            "none";
+
+    }
+
+});
+
+
+// =========================
+// 人数
+// =========================
+
+socket.on(
+    "playerCount",
+    (count) => {
+
+        if (count === 1) {
+
+            statusText.textContent =
+                "相手を待っています。このURLを友達に送ってください。";
+
+            guestChoiceDisplay.textContent =
+                "ゲストはまだ選択していません";
+
+            resultText.textContent = "";
+
+            disableButtons();
+
+        }
+
+
+        if (count === 2) {
+
+            statusText.textContent =
+                "対戦相手が参加しました！";
+
+            resultText.textContent = "";
+
+            enableButtons();
+
+        }
+
+    }
+);
+
+
+// =========================
+// 選択
+// =========================
+
+buttons.forEach(
+    button => {
+
+        button.addEventListener(
+            "click",
+            () => {
+
+                const choice =
+                    button.dataset.choice;
+
+
+                socket.emit(
+                    "choose",
+                    {
+                        roomId,
+                        choice
+                    }
+                );
+
+
+                resultText.innerHTML =
+                    "あなたの選択：<strong>" +
+                    getName(choice) +
+                    "</strong>";
+
+
+                statusText.textContent =
+                    "相手を待っています…";
+
+
+                disableButtons();
+
+            }
+        );
+
+    }
+);
+
+
+// =========================
+// ホストだけゲストの手を見る
+// =========================
+
+socket.on(
+    "guestChoice",
+    (choice) => {
+
+        if (myRole !== "host") {
+            return;
+        }
+
+
+        guestChoiceDisplay.innerHTML =
+            "ゲストの選択： " +
+            getEmoji(choice) +
+            " <strong>" +
+            getName(choice) +
+            "</strong>";
+
+
+        statusText.textContent =
+            "ゲストが選択しました。あなたの手を選んでください。";
+
+
+        enableButtons();
+
+    }
+);
+
+
+// =========================
+// 結果
+// =========================
+
+socket.on(
+    "result",
+    (data) => {
+
+        const you =
+            data.you;
+
+        const opponent =
+            data.opponent;
+
+
+        let message;
+
+
+        if (you === opponent) {
+
+            message =
+                "引き分け！";
+
+        }
+
+        else if (
+
+            (you === "demon" &&
+             opponent === "human") ||
+
+            (you === "human" &&
+             opponent === "angel") ||
+
+            (you === "angel" &&
+             opponent === "demon")
+
+        ) {
+
+            message =
+                "🎉 あなたの勝ち！";
+
+        }
+
+        else {
+
+            message =
+                "あなたの負け！";
+
+        }
+
+
+        resultText.innerHTML =
+
+            '<div class="result-characters">' +
+
+            getEmoji(you) +
+
+            "　VS　" +
+
+            getEmoji(opponent) +
+
+            "</div>" +
+
+            "あなた：" +
+            getName(you) +
+
+            "<br>" +
+
+            "相手：" +
+            getName(opponent) +
+
+            "<br><br>" +
+
+            message;
+
+
+        statusText.textContent =
+            "次の勝負ができます！";
+
+
+        if (myRole === "host") {
+
+            guestChoiceDisplay.textContent =
+                "ゲストはまだ選択していません";
+
+        }
+
+
+        enableButtons();
+
+    }
+);
+
+
+// =========================
+// その他
+// =========================
+
+socket.on(
+    "roomFull",
+    () => {
+
+        statusText.textContent =
+            "この部屋は満員です。";
+
+        disableButtons();
+
+    }
+);
+
+
+socket.on(
+    "guestDisconnected",
+    () => {
+
+        statusText.textContent =
+            "ゲストが退出しました。";
+
+        guestChoiceDisplay.textContent =
+            "ゲストはまだ選択していません";
+
+        resultText.textContent = "";
+
+        disableButtons();
+
+    }
+);
+
+
+socket.on(
+    "hostDisconnected",
+    () => {
+
+        statusText.textContent =
+            "ホストが退出したため、部屋が終了しました。";
+
+        resultText.textContent = "";
+
+        disableButtons();
+
+    }
+);
+
+
+// =========================
+// 名前
+// =========================
+
+function getName(choice) {
+
+    if (choice === "demon") {
+        return "魔族";
+    }
+
+    if (choice === "human") {
+        return "人間";
+    }
+
+    if (choice === "angel") {
+        return "天使";
+    }
+
+    return "";
+
+}
+
+
+function getEmoji(choice) {
+
+    if (choice === "demon") {
+        return "😈";
+    }
+
+    if (choice === "human") {
+        return "⚔️";
+    }
+
+    if (choice === "angel") {
+        return "👼";
+    }
+
+    return "";
+
+}
+
+
+function enableButtons() {
+
+    buttons.forEach(
+        button => {
+            button.disabled = false;
+        }
+    );
+
+}
+
+
+function disableButtons() {
+
+    buttons.forEach(
+        button => {
+            button.disabled = true;
+        }
+    );
+
+}
+
+</script>
+
+
+</body>
+
+</html>
