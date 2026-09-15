@@ -12,6 +12,7 @@
 
 <title>三界じゃんけん</title>
 
+
 <style>
 
 * {
@@ -57,16 +58,8 @@ body {
     background-repeat: no-repeat;
 
     background-attachment: fixed;
-
-    transition:
-        background-color 0.6s ease,
-        box-shadow 0.6s ease;
 }
 
-
-/* ========================================
-   背景の暗いオーバーレイ
-======================================== */
 
 body::before {
 
@@ -83,15 +76,15 @@ body::before {
     background:
         radial-gradient(
             circle at center,
-            rgba(80, 25, 100, 0.04) 0%,
+            rgba(80, 25, 100, 0.04),
             rgba(10, 3, 15, 0.25) 55%,
-            rgba(0, 0, 0, 0.58) 100%
+            rgba(0, 0, 0, 0.58)
         );
 }
 
 
 /* ========================================
-   魅了時のピンク侵食
+   魅了背景
 ======================================== */
 
 body::after {
@@ -116,7 +109,8 @@ body::after {
             rgba(20, 3, 20, 0.12)
         );
 
-    transition: opacity 0.6s ease;
+    transition:
+        opacity 0.6s ease;
 }
 
 
@@ -134,7 +128,7 @@ body.charmed {
 
 
 /* ========================================
-   メイン
+   基本
 ======================================== */
 
 .container {
@@ -164,16 +158,11 @@ h1 {
 }
 
 
-h2 {
-    margin-top: 10px;
-}
-
-
 .subtitle {
 
     opacity: 0.7;
 
-    margin-bottom: 30px;
+    margin-bottom: 25px;
 }
 
 
@@ -250,11 +239,9 @@ button:disabled {
 
 input {
 
-    width:
-        min(350px, 90%);
+    width: min(350px, 90%);
 
-    padding:
-        13px 15px;
+    padding: 13px 15px;
 
     border:
         1px solid
@@ -270,14 +257,6 @@ input {
     font-size: 16px;
 
     outline: none;
-
-    backdrop-filter:
-        blur(8px);
-}
-
-
-input:focus {
-    border-color: #b98cff;
 }
 
 
@@ -319,8 +298,7 @@ input:focus {
 
 .room-info {
 
-    margin:
-        18px auto;
+    margin: 18px auto;
 
     padding: 15px;
 
@@ -361,6 +339,61 @@ input:focus {
     opacity: 0.75;
 
     font-size: 14px;
+}
+
+
+/* ========================================
+   ★通算金額
+======================================== */
+
+.money-panel {
+
+    margin:
+        15px auto 20px;
+
+    width:
+        min(420px, 95%);
+
+    padding:
+        15px 20px;
+
+    border-radius: 18px;
+
+    background:
+        rgba(5, 2, 10, 0.72);
+
+    border:
+        1px solid
+        rgba(255, 220, 120, 0.3);
+
+    box-shadow:
+        0 8px 30px
+        rgba(0, 0, 0, 0.35);
+}
+
+
+.money-title {
+
+    font-size: 14px;
+
+    opacity: 0.7;
+}
+
+
+#moneyAmount {
+
+    margin-top: 3px;
+
+    font-size:
+        clamp(28px, 6vw, 42px);
+
+    font-weight: 900;
+
+    color: #ffd76a;
+
+    text-shadow:
+        0 0 15px
+        rgba(255, 200, 70, 0.35);
 }
 
 
@@ -408,8 +441,7 @@ input:focus {
 
     width: 230px;
 
-    padding:
-        18px 14px;
+    padding: 18px 14px;
 
     border-radius: 22px;
 
@@ -461,11 +493,11 @@ input:focus {
 
 .choice.charm-locked {
 
-    opacity: 0.18;
+    opacity: 0.16;
 
     filter:
         grayscale(1)
-        brightness(0.6);
+        brightness(0.55);
 }
 
 
@@ -548,7 +580,7 @@ input:focus {
 
 
 /* ========================================
-   ホストパネル
+   ホスト操作
 ======================================== */
 
 #hostPanel {
@@ -558,14 +590,14 @@ input:focus {
     margin:
         25px auto 0;
 
-    padding: 18px;
+    padding: 20px;
 
     max-width: 760px;
 
     border-radius: 18px;
 
     background:
-        rgba(5, 2, 10, 0.68);
+        rgba(5, 2, 10, 0.72);
 
     border:
         1px solid
@@ -576,7 +608,21 @@ input:focus {
 }
 
 
+.host-panel-title {
+
+    font-size: 20px;
+
+    font-weight: bold;
+
+    color: #d9c4ff;
+
+    margin-bottom: 15px;
+}
+
+
 #guestChoiceText {
+
+    margin-bottom: 12px;
 
     font-size: 20px;
 
@@ -588,24 +634,35 @@ input:focus {
 
 #charmButton {
 
-    margin-top: 15px;
-
     background:
         linear-gradient(
             135deg,
             #ff4fa7,
             #a82979
         );
+}
+
+
+#allowChoiceButton {
+
+    margin-left: 8px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #46b981,
+            #237050
+        );
 
     box-shadow:
         0 5px 20px
-        rgba(255, 70, 170, 0.35);
+        rgba(70, 210, 140, 0.25);
 }
 
 
 #charmInfo {
 
-    margin-top: 10px;
+    margin-top: 12px;
 
     min-height: 22px;
 
@@ -614,7 +671,7 @@ input:focus {
 
 
 /* ========================================
-   ゲスト画像変更
+   A/B変更
 ======================================== */
 
 .guest-image-control {
@@ -655,8 +712,7 @@ input:focus {
 
 .image-change-button {
 
-    padding:
-        10px 14px;
+    padding: 10px 14px;
 
     font-size: 14px;
 
@@ -744,35 +800,23 @@ input:focus {
 @keyframes charmFlashAnimation {
 
     0% {
-
         opacity: 0;
-
-        transform:
-            scale(0.3);
+        transform: scale(0.3);
     }
 
     30% {
-
         opacity: 1;
-
-        transform:
-            scale(1.25);
+        transform: scale(1.25);
     }
 
     65% {
-
         opacity: 1;
-
-        transform:
-            scale(1);
+        transform: scale(1);
     }
 
     100% {
-
         opacity: 0;
-
-        transform:
-            scale(1.5);
+        transform: scale(1.5);
     }
 }
 
@@ -803,8 +847,7 @@ input:focus {
 
         transform:
             translateY(30px)
-            scale(0.4)
-            rotate(0deg);
+            scale(0.4);
     }
 
     20% {
@@ -866,10 +909,6 @@ input:focus {
         );
 
     font-weight: bold;
-
-    text-shadow:
-        0 0 30px
-        rgba(180, 120, 255, 0.8);
 }
 
 
@@ -917,14 +956,6 @@ input:focus {
         1.8s
         ease-in-out
         infinite;
-
-    transform-origin:
-        center bottom;
-}
-
-
-.fighter:last-child img {
-    animation-delay: -0.9s;
 }
 
 
@@ -940,10 +971,6 @@ input:focus {
     font-weight: bold;
 
     color: #d4b0ff;
-
-    text-shadow:
-        0 0 20px
-        #7c3cff;
 }
 
 
@@ -963,10 +990,57 @@ input:focus {
     font-weight: 900;
 
     letter-spacing: 0.08em;
+}
 
-    text-shadow:
-        0 0 30px
-        currentColor;
+
+/* ========================================
+   ★金額変動演出
+======================================== */
+
+#moneyResult {
+
+    display: none;
+
+    margin-top: 8px;
+
+    font-size:
+        clamp(
+            25px,
+            6vw,
+            45px
+        );
+
+    font-weight: 900;
+}
+
+
+.money-plus {
+
+    color: #74f0a7;
+}
+
+
+.money-minus {
+
+    color: #ff7089;
+}
+
+
+.money-zero {
+
+    color: #dddddd;
+}
+
+
+#battleMoneyTotal {
+
+    display: none;
+
+    margin-top: 8px;
+
+    font-size: 20px;
+
+    color: #ffd76a;
 }
 
 
@@ -998,8 +1072,7 @@ input:focus {
 
         min-width: 100px;
 
-        padding:
-            10px 6px;
+        padding: 10px 6px;
     }
 
 
@@ -1018,6 +1091,19 @@ input:focus {
     }
 
 
+    #allowChoiceButton {
+
+        margin-left: 0;
+
+        margin-top: 8px;
+    }
+
+
+    .image-change-buttons {
+        flex-direction: column;
+    }
+
+
     #battleArea {
         gap: 10px;
     }
@@ -1028,11 +1114,6 @@ input:focus {
         width: 34vw;
 
         height: 250px;
-    }
-
-
-    .image-change-buttons {
-        flex-direction: column;
     }
 }
 
@@ -1075,6 +1156,7 @@ input:focus {
         遊び方を選択
     </h2>
 
+
     <div class="menu-buttons">
 
         <button id="showCreateButton">
@@ -1103,6 +1185,7 @@ input:focus {
         部屋を作る
     </h2>
 
+
     <div class="form-area">
 
         <input
@@ -1130,7 +1213,7 @@ input:focus {
 
 
 <!-- =====================================
-     部屋参加
+     参加
 ===================================== -->
 
 <section
@@ -1141,6 +1224,7 @@ input:focus {
     <h2>
         部屋に参加
     </h2>
+
 
     <div class="form-area">
 
@@ -1178,6 +1262,7 @@ input:focus {
     class="screen"
 >
 
+
     <div class="room-info">
 
         部屋コード
@@ -1195,6 +1280,24 @@ input:focus {
     </div>
 
 
+    <!-- ★通算金額 -->
+
+    <div class="money-panel">
+
+        <div
+            id="moneyTitle"
+            class="money-title"
+        >
+            通算金額
+        </div>
+
+        <div id="moneyAmount">
+            0円
+        </div>
+
+    </div>
+
+
     <div id="status">
         接続待ち...
     </div>
@@ -1207,8 +1310,8 @@ input:focus {
     <div id="hostPanel">
 
 
-        <div>
-            相手の選択
+        <div class="host-panel-title">
+            ホスト操作
         </div>
 
 
@@ -1219,6 +1322,11 @@ input:focus {
 
         <button id="charmButton">
             💗 魅了する
+        </button>
+
+
+        <button id="allowChoiceButton">
+            🔓 ゲストの選択を許可
         </button>
 
 
@@ -1264,7 +1372,7 @@ input:focus {
 
 
             <div id="guestImageInfo">
-                ボタンを押すとゲスト側だけ A ⇄ B が切り替わります
+                選択を許可する前に変更できます
             </div>
 
 
@@ -1357,7 +1465,7 @@ input:focus {
 
 
 <!-- =====================================
-     VS画面
+     バトル画面
 ===================================== -->
 
 <div id="battleOverlay">
@@ -1412,6 +1520,12 @@ input:focus {
 <div id="battleResult"></div>
 
 
+<div id="moneyResult"></div>
+
+
+<div id="battleMoneyTotal"></div>
+
+
 <div id="rematchArea">
 
     <button id="rematchButton">
@@ -1440,93 +1554,67 @@ const socket = io();
 ======================================== */
 
 const screens =
-    document.querySelectorAll(
-        ".screen"
-    );
+    document.querySelectorAll(".screen");
 
 
 const menuScreen =
-    document.getElementById(
-        "menuScreen"
-    );
+    document.getElementById("menuScreen");
 
 
 const createScreen =
-    document.getElementById(
-        "createScreen"
-    );
+    document.getElementById("createScreen");
 
 
 const joinScreen =
-    document.getElementById(
-        "joinScreen"
-    );
+    document.getElementById("joinScreen");
 
 
 const gameScreen =
-    document.getElementById(
-        "gameScreen"
-    );
+    document.getElementById("gameScreen");
 
 
 const statusText =
-    document.getElementById(
-        "status"
-    );
+    document.getElementById("status");
 
 
 const roomCode =
-    document.getElementById(
-        "roomCode"
-    );
+    document.getElementById("roomCode");
 
 
 const shareUrl =
-    document.getElementById(
-        "shareUrl"
-    );
+    document.getElementById("shareUrl");
 
 
 const createError =
-    document.getElementById(
-        "createError"
-    );
+    document.getElementById("createError");
 
 
 const joinError =
-    document.getElementById(
-        "joinError"
-    );
+    document.getElementById("joinError");
 
 
 const hostPanel =
-    document.getElementById(
-        "hostPanel"
-    );
+    document.getElementById("hostPanel");
 
 
 const guestChoiceText =
-    document.getElementById(
-        "guestChoiceText"
-    );
+    document.getElementById("guestChoiceText");
 
 
 const charmButton =
-    document.getElementById(
-        "charmButton"
-    );
+    document.getElementById("charmButton");
+
+
+const allowChoiceButton =
+    document.getElementById("allowChoiceButton");
 
 
 const charmInfo =
-    document.getElementById(
-        "charmInfo"
-    );
+    document.getElementById("charmInfo");
 
 
 const guestImageInfo =
-    document.getElementById(
-        "guestImageInfo"
-    );
+    document.getElementById("guestImageInfo");
 
 
 const imageChangeButtons =
@@ -1536,50 +1624,52 @@ const imageChangeButtons =
 
 
 const choices =
-    document.querySelectorAll(
-        ".choice"
-    );
+    document.querySelectorAll(".choice");
 
 
 const demonImage =
-    document.getElementById(
-        "demonImage"
-    );
+    document.getElementById("demonImage");
 
 
 const humanImage =
-    document.getElementById(
-        "humanImage"
-    );
+    document.getElementById("humanImage");
 
 
 const angelImage =
-    document.getElementById(
-        "angelImage"
-    );
+    document.getElementById("angelImage");
+
+
+const moneyTitle =
+    document.getElementById("moneyTitle");
+
+
+const moneyAmount =
+    document.getElementById("moneyAmount");
 
 
 const battleOverlay =
-    document.getElementById(
-        "battleOverlay"
-    );
+    document.getElementById("battleOverlay");
 
 
 const countdown =
-    document.getElementById(
-        "countdown"
-    );
+    document.getElementById("countdown");
 
 
 const battleArea =
-    document.getElementById(
-        "battleArea"
-    );
+    document.getElementById("battleArea");
 
 
 const battleResult =
+    document.getElementById("battleResult");
+
+
+const moneyResult =
+    document.getElementById("moneyResult");
+
+
+const battleMoneyTotal =
     document.getElementById(
-        "battleResult"
+        "battleMoneyTotal"
     );
 
 
@@ -1623,25 +1713,42 @@ const charmFlash =
    状態
 ======================================== */
 
-let myRole = null;
+let myRole =
+    null;
 
-let currentRoomId = null;
 
-let isCharmed = false;
+let currentRoomId =
+    null;
 
-let ambientHeartTimer = null;
+
+let isCharmed =
+    false;
+
+
+let guestCanChoose =
+    false;
+
+
+let guestMoney =
+    0;
+
+
+let ambientHeartTimer =
+    null;
 
 
 let guestImages = {
 
     demon: false,
+
     human: false,
+
     angel: false
 };
 
 
 /* ========================================
-   画面切り替え
+   画面
 ======================================== */
 
 function showScreen(screen) {
@@ -1659,6 +1766,50 @@ function showScreen(screen) {
     screen.classList.add(
         "active"
     );
+}
+
+
+/* ========================================
+   金額表示
+======================================== */
+
+function formatMoney(amount) {
+
+    const sign =
+        amount > 0
+            ? "+"
+            : "";
+
+
+    return (
+        sign +
+        amount.toLocaleString("ja-JP") +
+        "円"
+    );
+}
+
+
+function updateMoneyDisplay() {
+
+
+    if (
+        myRole === "host"
+    ) {
+
+        moneyTitle.textContent =
+            "ゲストの通算金額";
+
+    } else {
+
+        moneyTitle.textContent =
+            "あなたの通算金額";
+    }
+
+
+    moneyAmount.textContent =
+        formatMoney(
+            guestMoney
+        );
 }
 
 
@@ -1801,7 +1952,7 @@ document
 
 
 /* ========================================
-   URLから部屋コード
+   URL部屋コード
 ======================================== */
 
 const urlParams =
@@ -1811,9 +1962,7 @@ const urlParams =
 
 
 const roomFromUrl =
-    urlParams.get(
-        "room"
-    );
+    urlParams.get("room");
 
 
 if (roomFromUrl) {
@@ -1833,7 +1982,7 @@ if (roomFromUrl) {
 
 
 /* ========================================
-   カード選択
+   選択
 ======================================== */
 
 choices.forEach(
@@ -1842,6 +1991,7 @@ choices.forEach(
         choice.addEventListener(
             "click",
             () => {
+
 
                 if (
                     choice.classList
@@ -1855,6 +2005,14 @@ choices.forEach(
 
                 const selected =
                     choice.dataset.choice;
+
+
+                if (
+                    myRole === "guest" &&
+                    !guestCanChoose
+                ) {
+                    return;
+                }
 
 
                 if (
@@ -1884,7 +2042,7 @@ choices.forEach(
 
 
 /* ========================================
-   カード無効化
+   無効
 ======================================== */
 
 function disableChoices() {
@@ -1901,7 +2059,7 @@ function disableChoices() {
 
 
 /* ========================================
-   カード有効化
+   有効
 ======================================== */
 
 function enableChoices() {
@@ -1922,6 +2080,7 @@ function enableChoices() {
         isCharmed
     ) {
 
+
         const demon =
             document.querySelector(
                 '[data-choice="demon"]'
@@ -1937,7 +2096,7 @@ function enableChoices() {
 
 
 /* ========================================
-   ゲスト通常画像
+   ゲスト画像
 ======================================== */
 
 function getGuestNormalImage(
@@ -1995,6 +2154,7 @@ function setNormalImages() {
     if (
         myRole === "host"
     ) {
+
 
         demonImage.src =
             "/images/demon.png";
@@ -2061,7 +2221,7 @@ function setCharmedImages() {
 
 
 /* ========================================
-   ゲスト画像変更ボタン
+   A/Bボタン
 ======================================== */
 
 imageChangeButtons.forEach(
@@ -2071,6 +2231,7 @@ imageChangeButtons.forEach(
             "click",
             () => {
 
+
                 if (
                     myRole !== "host"
                 ) {
@@ -2078,24 +2239,22 @@ imageChangeButtons.forEach(
                 }
 
 
-                const choice =
-                    button.dataset
-                        .imageChoice;
+                if (
+                    button.disabled
+                ) {
+                    return;
+                }
 
 
                 socket.emit(
                     "toggleGuestImage",
-                    choice
+                    button.dataset.imageChoice
                 );
             }
         );
     }
 );
 
-
-/* ========================================
-   画像変更ボタン更新
-======================================== */
 
 function updateImageChangeButtons() {
 
@@ -2105,8 +2264,7 @@ function updateImageChangeButtons() {
 
 
             const choice =
-                button.dataset
-                    .imageChoice;
+                button.dataset.imageChoice;
 
 
             const isB =
@@ -2119,27 +2277,21 @@ function updateImageChangeButtons() {
             if (
                 choice === "demon"
             ) {
-
-                name =
-                    "😈 魔族";
+                name = "😈 魔族";
             }
 
 
             if (
                 choice === "human"
             ) {
-
-                name =
-                    "👤 人間";
+                name = "👤 人間";
             }
 
 
             if (
                 choice === "angel"
             ) {
-
-                name =
-                    "👼 天使";
+                name = "👼 天使";
             }
 
 
@@ -2156,8 +2308,32 @@ function updateImageChangeButtons() {
 }
 
 
+function setHostPreparationButtons(
+    enabled
+) {
+
+
+    charmButton.disabled =
+        !enabled ||
+        isCharmed;
+
+
+    allowChoiceButton.disabled =
+        !enabled;
+
+
+    imageChangeButtons.forEach(
+        button => {
+
+            button.disabled =
+                !enabled;
+        }
+    );
+}
+
+
 /* ========================================
-   画像変更通知
+   A/B変更受信
 ======================================== */
 
 socket.on(
@@ -2196,14 +2372,109 @@ socket.on(
         ) {
 
 
-            const name =
-                getChoiceName(
-                    data.choice
-                );
+            guestImageInfo.textContent =
+                `${getChoiceName(data.choice)}を${data.isB ? "B" : "A"}に変更しました`;
+        }
+    }
+);
+
+
+socket.on(
+    "guestImageChangeError",
+    message => {
+
+        guestImageInfo.textContent =
+            message;
+    }
+);
+
+
+/* ========================================
+   ★選択許可ボタン
+======================================== */
+
+allowChoiceButton
+    .addEventListener(
+        "click",
+        () => {
+
+
+            if (
+                myRole !== "host"
+            ) {
+                return;
+            }
+
+
+            allowChoiceButton.disabled =
+                true;
+
+
+            statusText.textContent =
+                "ゲストに選択を許可しています...";
+
+
+            socket.emit(
+                "allowGuestChoice"
+            );
+        }
+    );
+
+
+/* ========================================
+   選択許可受信
+======================================== */
+
+socket.on(
+    "guestChoiceAllowed",
+    data => {
+
+
+        if (
+            myRole === "host"
+        ) {
+
+
+            setHostPreparationButtons(
+                false
+            );
+
+
+            allowChoiceButton.textContent =
+                "🔒 選択許可済み";
 
 
             guestImageInfo.textContent =
-                `ゲストの${name}画像を ${data.isB ? "B" : "A"} に変更しました`;
+                "ゲストの選択を待っています";
+
+
+            statusText.textContent =
+                "ゲストがカードを選ぶまで待ってください";
+
+
+            disableChoices();
+        }
+
+
+        if (
+            myRole === "guest"
+        ) {
+
+
+            guestCanChoose =
+                true;
+
+
+            statusText.textContent =
+
+                isCharmed
+
+                    ? "💗 人間か天使を選んでください"
+
+                    : "魔族・人間・天使から選んでください";
+
+
+            enableChoices();
         }
     }
 );
@@ -2228,7 +2499,6 @@ function getBattleImage(
         if (
             choice === "demon"
         ) {
-
             return "/images/demon.png";
         }
 
@@ -2236,7 +2506,6 @@ function getBattleImage(
         if (
             choice === "human"
         ) {
-
             return "/images/host_human.png";
         }
 
@@ -2244,7 +2513,6 @@ function getBattleImage(
         if (
             choice === "angel"
         ) {
-
             return "/images/angel.png";
         }
     }
@@ -2255,15 +2523,12 @@ function getBattleImage(
     ) {
 
 
-        if (
-            charmed
-        ) {
+        if (charmed) {
 
 
             if (
                 choice === "human"
             ) {
-
                 return "/images/human_charmed.png";
             }
 
@@ -2271,7 +2536,6 @@ function getBattleImage(
             if (
                 choice === "angel"
             ) {
-
                 return "/images/angel_charmed.png";
             }
         }
@@ -2288,18 +2552,15 @@ function getBattleImage(
 
 
 /* ========================================
-   選択肢名
+   名前
 ======================================== */
 
-function getChoiceName(
-    choice
-) {
+function getChoiceName(choice) {
 
 
     if (
         choice === "demon"
     ) {
-
         return "魔族";
     }
 
@@ -2307,7 +2568,6 @@ function getChoiceName(
     if (
         choice === "human"
     ) {
-
         return "人間";
     }
 
@@ -2315,7 +2575,6 @@ function getChoiceName(
     if (
         choice === "angel"
     ) {
-
         return "天使";
     }
 
@@ -2325,7 +2584,7 @@ function getChoiceName(
 
 
 /* ========================================
-   勝敗
+   自分視点の勝敗
 ======================================== */
 
 function getResult(
@@ -2337,7 +2596,6 @@ function getResult(
     if (
         you === opponent
     ) {
-
         return "DRAW";
     }
 
@@ -2364,7 +2622,6 @@ function getResult(
         )
 
     ) {
-
         return "WIN";
     }
 
@@ -2374,7 +2631,7 @@ function getResult(
 
 
 /* ========================================
-   魅了ボタン
+   魅了
 ======================================== */
 
 charmButton.addEventListener(
@@ -2405,7 +2662,7 @@ charmButton.addEventListener(
 
 
 /* ========================================
-   ハート作成
+   ハート
 ======================================== */
 
 function createHeart() {
@@ -2422,7 +2679,6 @@ function createHeart() {
 
 
     const hearts = [
-
         "💗",
         "💖",
         "💕",
@@ -2460,13 +2716,6 @@ function createHeart() {
         "px";
 
 
-    heart.style.animationDuration =
-        1.5 +
-        Math.random() *
-        1.5 +
-        "s";
-
-
     document.body.appendChild(
         heart
     );
@@ -2482,10 +2731,6 @@ function createHeart() {
     );
 }
 
-
-/* ========================================
-   魅了爆発
-======================================== */
 
 function playCharmExplosion() {
 
@@ -2509,6 +2754,7 @@ function playCharmExplosion() {
         i++
     ) {
 
+
         setTimeout(
             createHeart,
             i * 25
@@ -2516,10 +2762,6 @@ function playCharmExplosion() {
     }
 }
 
-
-/* ========================================
-   ホスト魅了演出
-======================================== */
 
 function playHostCharmEffect() {
 
@@ -2543,6 +2785,7 @@ function playHostCharmEffect() {
         i++
     ) {
 
+
         setTimeout(
             createHeart,
             i * 35
@@ -2550,10 +2793,6 @@ function playHostCharmEffect() {
     }
 }
 
-
-/* ========================================
-   常時ハート
-======================================== */
 
 function startAmbientHearts() {
 
@@ -2568,8 +2807,7 @@ function startAmbientHearts() {
 
                 if (
                     isCharmed &&
-                    myRole ===
-                        "guest"
+                    myRole === "guest"
                 ) {
 
                     createHeart();
@@ -2624,10 +2862,6 @@ function stopCharmMode() {
     setNormalImages();
 
 
-    charmButton.disabled =
-        false;
-
-
     charmButton.textContent =
         "💗 魅了する";
 
@@ -2654,6 +2888,10 @@ socket.on(
             data.roomId;
 
 
+        guestMoney =
+            data.guestMoney || 0;
+
+
         if (
             data.guestImages
         ) {
@@ -2668,22 +2906,26 @@ socket.on(
             currentRoomId;
 
 
-        const url =
-            `${window.location.origin}?room=${currentRoomId}`;
-
-
         shareUrl.textContent =
-            url;
+            `${window.location.origin}?room=${currentRoomId}`;
 
 
         hostPanel.style.display =
             "block";
 
 
+        updateMoneyDisplay();
+
+
         updateImageChangeButtons();
 
 
         setNormalImages();
+
+
+        setHostPreparationButtons(
+            false
+        );
 
 
         disableChoices();
@@ -2701,7 +2943,7 @@ socket.on(
 
 
 /* ========================================
-   部屋作成エラー
+   作成エラー
 ======================================== */
 
 socket.on(
@@ -2715,7 +2957,7 @@ socket.on(
 
 
 /* ========================================
-   ゲスト参加成功
+   参加成功
 ======================================== */
 
 socket.on(
@@ -2729,6 +2971,10 @@ socket.on(
 
         currentRoomId =
             data.roomId;
+
+
+        guestMoney =
+            data.guestMoney || 0;
 
 
         if (
@@ -2753,11 +2999,17 @@ socket.on(
             "none";
 
 
+        updateMoneyDisplay();
+
+
         setNormalImages();
 
 
+        disableChoices();
+
+
         statusText.textContent =
-            "ゲーム開始を待っています...";
+            "ホストの準備を待っています...";
 
 
         showScreen(
@@ -2768,7 +3020,7 @@ socket.on(
 
 
 /* ========================================
-   参加エラー
+   エラー
 ======================================== */
 
 socket.on(
@@ -2790,7 +3042,7 @@ socket.on(
     () => {
 
         statusText.textContent =
-            "ゲストが参加しました！";
+            "ゲストが参加しました。準備してください！";
     }
 );
 
@@ -2804,6 +3056,10 @@ socket.on(
     data => {
 
 
+        guestCanChoose =
+            false;
+
+
         if (
             data.guestImages
         ) {
@@ -2812,6 +3068,13 @@ socket.on(
                 ...data.guestImages
             };
         }
+
+
+        guestMoney =
+            data.guestMoney ?? guestMoney;
+
+
+        updateMoneyDisplay();
 
 
         stopCharmMode();
@@ -2835,16 +3098,23 @@ socket.on(
             "none";
 
 
+        moneyResult.style.display =
+            "none";
+
+
+        battleMoneyTotal.style.display =
+            "none";
+
+
         rematchArea.style.display =
             "none";
 
 
-        countdown.style.display =
-            "block";
-
-
         guestChoiceText.textContent =
             "まだ選んでいません";
+
+
+        disableChoices();
 
 
         if (
@@ -2853,27 +3123,27 @@ socket.on(
 
 
             statusText.textContent =
-                "魔族・人間・天使から選んでください";
+                "ホストの準備を待っています…";
 
-
-            enableChoices();
 
         } else {
 
 
             statusText.textContent =
-                "ゲストが選択するまで待ってください";
+                "魅了・カード変更などを設定してから選択を許可してください";
 
 
-            disableChoices();
+            allowChoiceButton.textContent =
+                "🔓 ゲストの選択を許可";
 
 
-            charmButton.disabled =
-                false;
+            guestImageInfo.textContent =
+                "選択を許可する前に変更できます";
 
 
-            charmButton.textContent =
-                "💗 魅了する";
+            setHostPreparationButtons(
+                true
+            );
         }
     }
 );
@@ -2900,11 +3170,7 @@ socket.on(
 
 
         statusText.textContent =
-            "相手の選択を確認しました。あなたの手を選んでください";
-
-
-        charmButton.disabled =
-            true;
+            "相手の選択を確認しました。あなたのカードを選んでください";
 
 
         enableChoices();
@@ -2937,14 +3203,28 @@ socket.on(
                 );
 
 
-            statusText.textContent =
-                "💗 魅了された！ 人間か天使を選んでください 💗";
-
-
             setCharmedImages();
 
 
-            enableChoices();
+            /*
+                まだホスト許可前なので
+                カードは有効化しない
+            */
+
+            if (
+                guestCanChoose
+            ) {
+
+                enableChoices();
+
+            } else {
+
+                disableChoices();
+            }
+
+
+            statusText.textContent =
+                "💗 魅了された！ ホストの選択許可を待っています…";
 
 
             playCharmExplosion();
@@ -2957,6 +3237,10 @@ socket.on(
         if (
             myRole === "host"
         ) {
+
+
+            isCharmed =
+                true;
 
 
             charmButton.disabled =
@@ -2976,10 +3260,6 @@ socket.on(
     }
 );
 
-
-/* ========================================
-   魅了エラー
-======================================== */
 
 socket.on(
     "charmError",
@@ -3011,7 +3291,7 @@ socket.on(
 
         if (
             myRole === "guest" &&
-            isCharmed
+            guestCanChoose
         ) {
 
             enableChoices();
@@ -3026,17 +3306,23 @@ socket.on(
 
 socket.on(
     "choiceAccepted",
-    data => {
+    () => {
 
 
         if (
             myRole === "guest"
         ) {
 
+
+            guestCanChoose =
+                false;
+
+
             statusText.textContent =
                 "ホストの選択を待っています...";
 
         } else {
+
 
             statusText.textContent =
                 "勝負！";
@@ -3060,6 +3346,10 @@ socket.on(
         stopAmbientHearts();
 
 
+        guestCanChoose =
+            false;
+
+
         if (
             data.guestImages
         ) {
@@ -3068,6 +3358,13 @@ socket.on(
                 ...data.guestImages
             };
         }
+
+
+        guestMoney =
+            data.guestMoney;
+
+
+        updateMoneyDisplay();
 
 
         const opponentRole =
@@ -3103,18 +3400,22 @@ socket.on(
 
 
         showBattle(
-            result
+            result,
+            data.moneyChange,
+            data.guestMoney
         );
     }
 );
 
 
 /* ========================================
-   VS演出
+   バトル演出
 ======================================== */
 
 function showBattle(
-    result
+    result,
+    change,
+    total
 ) {
 
 
@@ -3137,11 +3438,20 @@ function showBattle(
         "none";
 
 
+    moneyResult.style.display =
+        "none";
+
+
+    battleMoneyTotal.style.display =
+        "none";
+
+
     rematchArea.style.display =
         "none";
 
 
-    let number = 3;
+    let number =
+        3;
 
 
     countdown.textContent =
@@ -3160,8 +3470,10 @@ function showBattle(
                     number > 0
                 ) {
 
+
                     countdown.textContent =
                         number;
+
 
                     return;
                 }
@@ -3204,21 +3516,87 @@ function showBattle(
                                     result === "WIN"
                                 ) {
 
+
                                     battleResult.style.color =
                                         "#ffd95a";
+
 
                                 } else if (
                                     result === "LOSE"
                                 ) {
 
+
                                     battleResult.style.color =
                                         "#ff667d";
 
+
                                 } else {
+
 
                                     battleResult.style.color =
                                         "#d4d4d4";
                                 }
+
+
+                                /*
+                                    ★ゲスト基準の金額
+                                */
+
+                                moneyResult.className =
+                                    "";
+
+
+                                if (
+                                    change > 0
+                                ) {
+
+
+                                    moneyResult.textContent =
+                                        `ゲスト +${change.toLocaleString("ja-JP")}円`;
+
+
+                                    moneyResult.classList.add(
+                                        "money-plus"
+                                    );
+
+
+                                } else if (
+                                    change < 0
+                                ) {
+
+
+                                    moneyResult.textContent =
+                                        `ゲスト ${change.toLocaleString("ja-JP")}円`;
+
+
+                                    moneyResult.classList.add(
+                                        "money-minus"
+                                    );
+
+
+                                } else {
+
+
+                                    moneyResult.textContent =
+                                        "ゲスト ±0円";
+
+
+                                    moneyResult.classList.add(
+                                        "money-zero"
+                                    );
+                                }
+
+
+                                moneyResult.style.display =
+                                    "block";
+
+
+                                battleMoneyTotal.textContent =
+                                    `ゲスト通算：${formatMoney(total)}`;
+
+
+                                battleMoneyTotal.style.display =
+                                    "block";
 
 
                                 rematchArea.style.display =
@@ -3281,10 +3659,13 @@ socket.on(
             data.guestReady
         ) {
 
+
             rematchStatus.textContent =
                 "両者準備完了！";
 
+
         } else {
+
 
             rematchStatus.textContent =
                 "相手の準備を待っています...";
@@ -3309,10 +3690,26 @@ socket.on(
         }
 
 
+        guestMoney =
+            0;
+
+
+        guestCanChoose =
+            false;
+
+
+        updateMoneyDisplay();
+
+
         stopCharmMode();
 
 
         disableChoices();
+
+
+        setHostPreparationButtons(
+            false
+        );
 
 
         guestChoiceText.textContent =
