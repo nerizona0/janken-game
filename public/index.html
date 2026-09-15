@@ -1,330 +1,622 @@
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>三界じゃんけん</title>
 
-
 <style>
-
 * {
     box-sizing: border-box;
 }
 
-
 body {
-
-    font-family:
-        Arial,
-        "Yu Gothic",
-        "Meiryo",
-        sans-serif;
-
     margin: 0;
-
-    padding: 25px 15px;
-
-    background:
-        linear-gradient(
-            135deg,
-            #17151f,
-            #272238
-        );
-
-    color: white;
-
     min-height: 100vh;
+    font-family: Arial, "Yu Gothic", "Meiryo", sans-serif;
+    background:
+        radial-gradient(circle at top, #342c4e 0%, #17151f 55%, #0d0c12 100%);
+    color: white;
+    transition: background 0.8s ease;
 }
 
+button,
+input {
+    font: inherit;
+}
 
-.game {
+button {
+    cursor: pointer;
+}
 
-    max-width: 800px;
+.screen {
+    display: none;
+    min-height: 100vh;
+    padding: 25px 15px;
+}
 
-    margin: auto;
+.screen.active {
+    display: block;
+}
 
+.container {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
     text-align: center;
 }
 
 
+/* ==============================
+   共通
+============================== */
+
 h1 {
-
-    font-size: 32px;
-
-    margin-bottom: 5px;
+    font-size: 38px;
+    margin: 25px 0 5px;
 }
-
 
 .subtitle {
-
-    color: #bbb;
-
-    margin-bottom: 30px;
+    color: #bdb8cb;
+    margin-bottom: 35px;
 }
 
-
-.room-box {
-
-    background: rgba(255,255,255,0.08);
-
-    border-radius: 15px;
-
-    padding: 15px;
-
-    margin-bottom: 20px;
+.panel {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 20px;
+    padding: 25px;
+    margin: 20px auto;
+    max-width: 600px;
 }
 
-
-#role {
-
-    font-weight: bold;
-
-    margin-top: 10px;
-
-    color: #ffd86b;
-}
-
-
-#status {
-
-    font-size: 20px;
-
-    margin: 25px 0;
-}
-
-
-/* =========================
-   ホスト専用表示
-========================= */
-
-#hostInfo {
-
-    display: none;
-
-    background: rgba(255, 215, 80, 0.12);
-
-    border: 2px solid #d7ad45;
-
-    border-radius: 15px;
-
-    padding: 15px;
-
-    margin: 20px 0;
-}
-
-
-#guestChoiceDisplay {
-
-    font-size: 25px;
-
-    font-weight: bold;
-
-    margin-top: 10px;
-}
-
-
-/* =========================
-   選択カード
-========================= */
-
-.choices {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(3, 1fr);
-
-    gap: 15px;
-
-    margin-top: 20px;
-}
-
-
-.choice {
-
-    border: 2px solid #555;
-
-    border-radius: 18px;
-
-    background: #252331;
-
+.main-button {
+    width: 100%;
+    max-width: 360px;
+    border: 0;
+    border-radius: 14px;
+    padding: 16px 20px;
+    margin: 8px;
+    background: #6d57d9;
     color: white;
-
-    padding: 15px 8px;
-
-    cursor: pointer;
-
-    transition:
-        transform 0.15s,
-        border-color 0.15s,
-        background 0.15s;
-
-    min-height: 220px;
+    font-weight: bold;
+    font-size: 18px;
 }
 
-
-.choice:hover:not(:disabled) {
-
-    transform: translateY(-5px);
-
-    border-color: white;
-
-    background: #302d40;
+.main-button:hover:not(:disabled) {
+    filter: brightness(1.15);
 }
 
-
-.choice:disabled {
-
-    opacity: 0.45;
-
+.main-button:disabled {
+    opacity: 0.4;
     cursor: not-allowed;
 }
 
+.secondary-button {
+    background: #3c3949;
+}
+
+input {
+    width: 100%;
+    max-width: 360px;
+    padding: 14px;
+    margin: 8px 0;
+    border-radius: 12px;
+    border: 1px solid #666;
+    background: #181720;
+    color: white;
+    text-align: center;
+    font-size: 17px;
+}
+
+.error {
+    color: #ff8585;
+    min-height: 24px;
+    margin-top: 10px;
+}
+
+
+/* ==============================
+   トップ
+============================== */
+
+.logo-icons {
+    font-size: 55px;
+    margin-top: 40px;
+}
+
+.menu-description {
+    color: #aaa;
+    margin-bottom: 15px;
+}
+
+
+/* ==============================
+   部屋情報
+============================== */
+
+.room-info {
+    background: rgba(255,255,255,0.07);
+    border-radius: 16px;
+    padding: 15px;
+    margin-bottom: 15px;
+    transition: 0.8s;
+}
+
+.room-code {
+    font-size: 24px;
+    font-weight: bold;
+    letter-spacing: 3px;
+    color: #ffd96a;
+}
+
+.role {
+    margin-top: 8px;
+    font-weight: bold;
+}
+
+#shareArea {
+    display: none;
+    margin: 15px auto;
+    max-width: 650px;
+}
+
+.share-url {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    background: #15141b;
+    border: 1px solid #555;
+    color: #ddd;
+    word-break: break-all;
+    margin: 8px 0;
+}
+
+#status {
+    font-size: 20px;
+    font-weight: bold;
+    min-height: 30px;
+    margin: 25px 0;
+    transition: color 0.8s;
+}
+
+
+/* ==============================
+   ホスト専用
+============================== */
+
+#hostSecret {
+    display: none;
+    max-width: 600px;
+    margin: 15px auto;
+    padding: 15px;
+    border: 2px solid #cda843;
+    border-radius: 15px;
+    background: rgba(255, 207, 70, 0.09);
+}
+
+#guestChoiceInfo {
+    margin-top: 8px;
+    font-size: 23px;
+    font-weight: bold;
+}
+
+.charm-button {
+    background:
+        linear-gradient(
+            135deg,
+            #ff4fa3,
+            #b84dce
+        );
+    margin-top: 18px;
+}
+
+#charmInfo {
+    margin-top: 8px;
+    min-height: 22px;
+    color: #ff9dce;
+    font-weight: bold;
+}
+
+
+/* ==============================
+   選択カード
+============================== */
+
+.choices {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin: 25px auto;
+    max-width: 850px;
+}
+
+.choice {
+    position: relative;
+    min-height: 260px;
+    padding: 15px 10px;
+    border-radius: 20px;
+    border: 2px solid #504d5d;
+    background: #25232f;
+    color: white;
+    transition: 0.25s;
+    overflow: hidden;
+}
+
+.choice:hover:not(:disabled) {
+    transform: translateY(-7px);
+    border-color: white;
+    background: #302d3e;
+}
+
+.choice:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
 
 .character-image {
-
     width: 100%;
-
-    height: 130px;
-
+    height: 175px;
     object-fit: contain;
-
-    margin-bottom: 8px;
 }
-
 
 .fallback {
-
-    font-size: 75px;
-
-    height: 130px;
-
-    display: flex;
-
-    justify-content: center;
-
+    height: 175px;
+    display: none;
     align-items: center;
+    justify-content: center;
+    font-size: 90px;
 }
 
-
-.name {
-
+.choice-name {
     display: block;
-
-    font-size: 22px;
-
+    margin-top: 8px;
+    font-size: 24px;
     font-weight: bold;
 }
 
-
-.old-name {
-
+.choice-rule {
     display: block;
-
     color: #aaa;
+    margin-top: 4px;
+    font-size: 14px;
+}
 
+
+/* ==============================
+   魅了状態
+============================== */
+
+body.charmed {
+    background:
+        radial-gradient(
+            circle at top,
+            #9b3c75 0%,
+            #542547 45%,
+            #251426 100%
+        );
+}
+
+body.charmed .room-info {
+    background: rgba(255, 105, 180, 0.12);
+    border: 1px solid rgba(255, 150, 205, 0.35);
+}
+
+body.charmed #status {
+    color: #ffc0df;
+}
+
+body.charmed .choice {
+    background: rgba(92, 34, 72, 0.78);
+    border-color: #c96b9d;
+}
+
+body.charmed .choice:hover:not(:disabled) {
+    border-color: #ffb6dc;
+    background: rgba(125, 45, 95, 0.85);
+}
+
+.choice.charm-locked {
+    opacity: 0.15 !important;
+    filter: grayscale(1);
+}
+
+.choice.charm-locked::after {
+    content: "💗 魅了により選択不可";
+    position: absolute;
+    left: 5px;
+    right: 5px;
+    bottom: 8px;
+    color: #ff9dce;
     font-size: 13px;
-
-    margin-top: 5px;
-}
-
-
-/* =========================
-   結果
-========================= */
-
-#result {
-
-    font-size: 25px;
-
     font-weight: bold;
+}
 
+
+/* ==============================
+   ハート
+============================== */
+
+.charm-heart {
+    position: fixed;
+    bottom: -60px;
+    z-index: 999;
+    pointer-events: none;
+    font-size: 35px;
+    animation: heartFloat 3.5s ease-out forwards;
+}
+
+@keyframes heartFloat {
+    0% {
+        transform:
+            translateY(0)
+            rotate(0deg)
+            scale(0.5);
+        opacity: 0;
+    }
+
+    15% {
+        opacity: 1;
+    }
+
+    100% {
+        transform:
+            translateY(-110vh)
+            rotate(30deg)
+            scale(1.4);
+        opacity: 0;
+    }
+}
+
+#charmFlash {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform:
+        translate(-50%, -50%);
+    z-index: 1000;
+    font-size: 55px;
+    font-weight: 900;
+    color: #ffb4dc;
+    text-shadow:
+        0 0 15px #ff3b9d,
+        0 0 30px #ff3b9d;
+    pointer-events: none;
+}
+
+#charmFlash.show {
+    display: block;
+    animation: charmFlashAnimation 1.8s ease forwards;
+}
+
+@keyframes charmFlashAnimation {
+    0% {
+        opacity: 0;
+        transform:
+            translate(-50%, -50%)
+            scale(0.3);
+    }
+
+    30% {
+        opacity: 1;
+        transform:
+            translate(-50%, -50%)
+            scale(1.2);
+    }
+
+    70% {
+        opacity: 1;
+        transform:
+            translate(-50%, -50%)
+            scale(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform:
+            translate(-50%, -50%)
+            scale(1.5);
+    }
+}
+
+
+/* ==============================
+   勝敗演出
+============================== */
+
+#battleOverlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: rgba(5, 4, 10, 0.96);
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    padding: 20px;
+}
+
+#battleOverlay.show {
+    display: flex;
+}
+
+#countdown {
+    font-size: 100px;
+    font-weight: bold;
+    animation: pulse 0.5s ease;
+}
+
+#versus {
+    display: none;
+    font-size: 35px;
+    width: 100%;
+}
+
+.vs-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 35px;
+}
+
+.vs-character {
+    width: 230px;
+}
+
+.vs-character img {
+    width: 100%;
+    height: 230px;
+    object-fit: contain;
+}
+
+.vs-name {
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.vs-text {
+    font-size: 60px;
+    font-weight: bold;
+    color: #ffd35d;
+}
+
+#finalResult {
+    display: none;
     margin-top: 30px;
+    font-size: 65px;
+    font-weight: 900;
+}
 
-    min-height: 80px;
+@keyframes pulse {
+    from {
+        transform: scale(1.6);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
 }
 
 
-.result-characters {
+/* ==============================
+   結果
+============================== */
 
-    font-size: 45px;
+#resultArea {
+    display: none;
+    max-width: 600px;
+    margin: 25px auto;
+    padding: 25px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.08);
+}
 
-    margin-bottom: 10px;
+#resultText {
+    font-size: 28px;
+    font-weight: bold;
+    line-height: 1.7;
+}
+
+#rematchButton {
+    margin-top: 20px;
+}
+
+#rematchStatus {
+    min-height: 24px;
+    margin-top: 12px;
+    color: #bbb;
 }
 
 
-/* =========================
+/* ==============================
    スマホ
-========================= */
+============================== */
 
 @media (max-width: 600px) {
 
-    body {
-
-        padding:
-            15px 10px;
-    }
-
-
     h1 {
-
-        font-size: 26px;
+        font-size: 29px;
     }
 
+    .logo-icons {
+        font-size: 43px;
+    }
 
     .choices {
-
-        gap: 7px;
+        gap: 6px;
     }
-
 
     .choice {
-
-        min-height: 170px;
-
-        padding: 10px 3px;
+        min-height: 190px;
+        padding: 8px 3px;
     }
 
+    .character-image,
+    .fallback {
+        height: 115px;
+    }
 
     .fallback {
-
-        font-size: 50px;
-
-        height: 90px;
+        font-size: 55px;
     }
 
-
-    .character-image {
-
-        height: 90px;
-    }
-
-
-    .name {
-
+    .choice-name {
         font-size: 18px;
     }
 
+    .choice-rule {
+        font-size: 11px;
+    }
+
+    .vs-row {
+        gap: 8px;
+    }
+
+    .vs-character {
+        width: 125px;
+    }
+
+    .vs-character img {
+        height: 150px;
+    }
+
+    .vs-text {
+        font-size: 35px;
+    }
+
+    .vs-name {
+        font-size: 18px;
+    }
+
+    #finalResult {
+        font-size: 45px;
+    }
+
+    #charmFlash {
+        font-size: 38px;
+    }
 }
-
 </style>
-
 </head>
-
 
 <body>
 
 
-<div class="game">
+<!-- ==============================
+     メニュー
+============================== -->
 
+<section id="menuScreen" class="screen active">
+<div class="container">
+
+    <div class="logo-icons">
+        😈 ⚔️ 👼
+    </div>
 
     <h1>三界じゃんけん</h1>
 
@@ -332,40 +624,216 @@ h1 {
         魔族・人間・天使
     </div>
 
+    <div class="panel">
 
-    <div class="room-box">
+        <h2>対戦を始める</h2>
 
-        部屋：
-        <strong id="room"></strong>
-
-        <div id="role">
-            接続中…
+        <div class="menu-description">
+            ホストとして新しい部屋を作成
         </div>
+
+        <button
+            id="showCreateButton"
+            class="main-button"
+        >
+            👑 部屋を作る
+        </button>
+
+        <br>
+
+        <button
+            id="showJoinButton"
+            class="main-button secondary-button"
+        >
+            🚪 部屋に参加
+        </button>
+
+    </div>
+
+</div>
+</section>
+
+
+<!-- ==============================
+     部屋作成
+============================== -->
+
+<section id="createScreen" class="screen">
+<div class="container">
+
+    <h1>部屋を作る</h1>
+
+    <div class="panel">
+
+        <p>
+            ホスト用パスワードを入力してください
+        </p>
+
+        <input
+            id="hostPassword"
+            type="password"
+            placeholder="ホスト用パスワード"
+        >
+
+        <br>
+
+        <button
+            id="createRoomButton"
+            class="main-button"
+        >
+            部屋を作成
+        </button>
+
+        <button
+            class="main-button secondary-button backMenu"
+        >
+            戻る
+        </button>
+
+        <div
+            id="createError"
+            class="error"
+        ></div>
+
+    </div>
+
+</div>
+</section>
+
+
+<!-- ==============================
+     部屋参加
+============================== -->
+
+<section id="joinScreen" class="screen">
+<div class="container">
+
+    <h1>部屋に参加</h1>
+
+    <div class="panel">
+
+        <p>
+            6文字の部屋コードを入力
+        </p>
+
+        <input
+            id="joinRoomCode"
+            type="text"
+            maxlength="6"
+            placeholder="例：AB12CD"
+        >
+
+        <br>
+
+        <button
+            id="joinRoomButton"
+            class="main-button"
+        >
+            参加する
+        </button>
+
+        <button
+            class="main-button secondary-button backMenu"
+        >
+            戻る
+        </button>
+
+        <div
+            id="joinError"
+            class="error"
+        ></div>
+
+    </div>
+
+</div>
+</section>
+
+
+<!-- ==============================
+     ゲーム
+============================== -->
+
+<section id="gameScreen" class="screen">
+<div class="container">
+
+    <h1>三界じゃんけん</h1>
+
+    <div class="subtitle">
+        😈 魔族＝グー　⚔️ 人間＝チョキ　👼 天使＝パー
+    </div>
+
+
+    <div class="room-info">
+
+        部屋コード
+
+        <div
+            id="roomCodeDisplay"
+            class="room-code"
+        >
+            ------
+        </div>
+
+        <div
+            id="roleDisplay"
+            class="role"
+        ></div>
+
+    </div>
+
+
+    <div id="shareArea">
+
+        <div>
+            このURLをゲストに送ってください
+        </div>
+
+        <div
+            id="shareUrl"
+            class="share-url"
+        ></div>
+
+        <button
+            id="copyButton"
+            class="main-button"
+        >
+            URLをコピー
+        </button>
 
     </div>
 
 
     <div id="status">
-        サーバーに接続しています…
+        接続中…
     </div>
 
 
-    <!-- ホストにしか表示されない -->
+    <!-- ホスト専用 -->
 
-    <div id="hostInfo">
+    <div id="hostSecret">
 
         👑 ホスト専用情報
 
-        <div id="guestChoiceDisplay">
+        <div id="guestChoiceInfo">
             ゲストはまだ選択していません
         </div>
+
+        <button
+            id="charmButton"
+            class="main-button charm-button"
+            disabled
+        >
+            💗 魅了する
+        </button>
+
+        <div id="charmInfo"></div>
 
     </div>
 
 
+    <!-- 選択肢 -->
 
     <div class="choices">
-
 
         <!-- 魔族 -->
 
@@ -379,29 +847,21 @@ h1 {
                 src="images/demon.png"
                 class="character-image"
                 alt="魔族"
-                onerror="
-                    this.style.display='none';
-                    this.nextElementSibling.style.display='flex';
-                "
             >
 
-            <div
-                class="fallback"
-                style="display:none;"
-            >
+            <div class="fallback">
                 😈
             </div>
 
-            <span class="name">
+            <span class="choice-name">
                 魔族
             </span>
 
-            <span class="old-name">
+            <span class="choice-rule">
                 グー
             </span>
 
         </button>
-
 
 
         <!-- 人間 -->
@@ -416,29 +876,21 @@ h1 {
                 src="images/human.png"
                 class="character-image"
                 alt="人間"
-                onerror="
-                    this.style.display='none';
-                    this.nextElementSibling.style.display='flex';
-                "
             >
 
-            <div
-                class="fallback"
-                style="display:none;"
-            >
+            <div class="fallback">
                 ⚔️
             </div>
 
-            <span class="name">
+            <span class="choice-name">
                 人間
             </span>
 
-            <span class="old-name">
+            <span class="choice-rule">
                 チョキ
             </span>
 
         </button>
-
 
 
         <!-- 天使 -->
@@ -453,409 +905,1407 @@ h1 {
                 src="images/angel.png"
                 class="character-image"
                 alt="天使"
-                onerror="
-                    this.style.display='none';
-                    this.nextElementSibling.style.display='flex';
-                "
             >
 
-            <div
-                class="fallback"
-                style="display:none;"
-            >
+            <div class="fallback">
                 👼
             </div>
 
-            <span class="name">
+            <span class="choice-name">
                 天使
             </span>
 
-            <span class="old-name">
+            <span class="choice-rule">
                 パー
             </span>
 
         </button>
 
-
     </div>
 
 
-    <div id="result"></div>
+    <!-- 結果 -->
 
+    <div id="resultArea">
+
+        <div id="resultText"></div>
+
+        <button
+            id="rematchButton"
+            class="main-button"
+        >
+            🔄 もう一度対戦
+        </button>
+
+        <div id="rematchStatus"></div>
+
+    </div>
+
+</div>
+</section>
+
+
+<!-- ==============================
+     魅了中央演出
+============================== -->
+
+<div id="charmFlash">
+    💗 魅了 💗
+</div>
+
+
+<!-- ==============================
+     バトル演出
+============================== -->
+
+<div id="battleOverlay">
+
+    <div id="countdown"></div>
+
+    <div id="versus">
+
+        <div class="vs-row">
+
+            <div class="vs-character">
+
+                <img
+                    id="yourBattleImage"
+                    alt="あなた"
+                >
+
+                <div
+                    id="yourBattleName"
+                    class="vs-name"
+                ></div>
+
+            </div>
+
+
+            <div class="vs-text">
+                VS
+            </div>
+
+
+            <div class="vs-character">
+
+                <img
+                    id="opponentBattleImage"
+                    alt="相手"
+                >
+
+                <div
+                    id="opponentBattleName"
+                    class="vs-name"
+                ></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div id="finalResult"></div>
 
 </div>
 
 
-
 <script src="/socket.io/socket.io.js"></script>
-
 
 <script>
 
 const socket = io();
 
+let myRole = null;
+let currentRoomId = null;
+let lastResult = null;
+let rematchPressed = false;
+let isCharmed = false;
+
+
+// ==============================
+// 要素
+// ==============================
+
+const screens =
+    document.querySelectorAll(".screen");
+
+const menuScreen =
+    document.getElementById("menuScreen");
+
+const createScreen =
+    document.getElementById("createScreen");
+
+const joinScreen =
+    document.getElementById("joinScreen");
+
+const gameScreen =
+    document.getElementById("gameScreen");
+
+const hostPassword =
+    document.getElementById("hostPassword");
+
+const joinRoomCode =
+    document.getElementById("joinRoomCode");
+
+const createError =
+    document.getElementById("createError");
+
+const joinError =
+    document.getElementById("joinError");
+
+const roomCodeDisplay =
+    document.getElementById("roomCodeDisplay");
+
+const roleDisplay =
+    document.getElementById("roleDisplay");
+
+const shareArea =
+    document.getElementById("shareArea");
+
+const shareUrl =
+    document.getElementById("shareUrl");
 
 const statusText =
     document.getElementById("status");
 
-const resultText =
-    document.getElementById("result");
+const hostSecret =
+    document.getElementById("hostSecret");
 
-const roomText =
-    document.getElementById("room");
+const guestChoiceInfo =
+    document.getElementById("guestChoiceInfo");
 
-const roleText =
-    document.getElementById("role");
+const charmButton =
+    document.getElementById("charmButton");
 
-const hostInfo =
-    document.getElementById("hostInfo");
+const charmInfo =
+    document.getElementById("charmInfo");
 
-const guestChoiceDisplay =
-    document.getElementById(
-        "guestChoiceDisplay"
-    );
-
-const buttons =
+const choices =
     document.querySelectorAll(".choice");
 
+const resultArea =
+    document.getElementById("resultArea");
 
-let myRole = null;
+const resultText =
+    document.getElementById("resultText");
+
+const rematchButton =
+    document.getElementById("rematchButton");
+
+const rematchStatus =
+    document.getElementById("rematchStatus");
 
 
-// =========================
-// 部屋番号
-// =========================
+// ==============================
+// 画面切り替え
+// ==============================
+
+function showScreen(screen) {
+
+    screens.forEach(s => {
+        s.classList.remove("active");
+    });
+
+    screen.classList.add("active");
+}
+
+
+document
+    .getElementById("showCreateButton")
+    .addEventListener("click", () => {
+
+        createError.textContent = "";
+        hostPassword.value = "";
+
+        showScreen(createScreen);
+    });
+
+
+document
+    .getElementById("showJoinButton")
+    .addEventListener("click", () => {
+
+        joinError.textContent = "";
+        joinRoomCode.value = "";
+
+        showScreen(joinScreen);
+    });
+
+
+document
+    .querySelectorAll(".backMenu")
+    .forEach(button => {
+
+        button.addEventListener("click", () => {
+            showScreen(menuScreen);
+        });
+
+    });
+
+
+// ==============================
+// 部屋作成
+// ==============================
+
+document
+    .getElementById("createRoomButton")
+    .addEventListener("click", () => {
+
+        const password =
+            hostPassword.value;
+
+        if (!password) {
+
+            createError.textContent =
+                "パスワードを入力してください。";
+
+            return;
+        }
+
+        createError.textContent =
+            "確認中…";
+
+        socket.emit(
+            "createRoom",
+            password
+        );
+    });
+
+
+socket.on(
+    "createRoomError",
+    message => {
+
+        createError.textContent =
+            message;
+    }
+);
+
+
+socket.on(
+    "roomCreated",
+    data => {
+
+        myRole = "host";
+        currentRoomId = data.roomId;
+
+        setupGameScreen();
+
+        roleDisplay.textContent =
+            "👑 あなたはホストです";
+
+        hostSecret.style.display =
+            "block";
+
+        shareArea.style.display =
+            "block";
+
+        const url =
+            window.location.origin +
+            "/?room=" +
+            currentRoomId;
+
+        shareUrl.textContent =
+            url;
+
+        statusText.textContent =
+            "ゲストの参加を待っています…";
+
+        charmButton.disabled = true;
+
+        disableChoices();
+
+        setNormalImages();
+
+        showScreen(gameScreen);
+    }
+);
+
+
+// ==============================
+// 部屋参加
+// ==============================
+
+document
+    .getElementById("joinRoomButton")
+    .addEventListener("click", () => {
+
+        const code =
+            joinRoomCode.value
+                .trim()
+                .toUpperCase();
+
+        if (!code) {
+
+            joinError.textContent =
+                "部屋コードを入力してください。";
+
+            return;
+        }
+
+        joinError.textContent =
+            "接続中…";
+
+        socket.emit(
+            "joinRoom",
+            code
+        );
+    });
+
+
+socket.on(
+    "joinRoomError",
+    message => {
+
+        joinError.textContent =
+            message;
+    }
+);
+
+
+socket.on(
+    "roomJoined",
+    data => {
+
+        myRole = "guest";
+        currentRoomId = data.roomId;
+
+        setupGameScreen();
+
+        roleDisplay.textContent =
+            "あなたはゲストです";
+
+        hostSecret.style.display =
+            "none";
+
+        shareArea.style.display =
+            "none";
+
+        setNormalImages();
+
+        showScreen(gameScreen);
+    }
+);
+
+
+// ==============================
+// 招待URL
+// ==============================
 
 const params =
     new URLSearchParams(
         window.location.search
     );
 
-let roomId =
+const roomFromUrl =
     params.get("room");
 
+if (roomFromUrl) {
 
-if (!roomId) {
+    joinRoomCode.value =
+        roomFromUrl.toUpperCase();
 
-    roomId =
-        Math.random()
-            .toString(36)
-            .substring(2, 8)
-            .toUpperCase();
+    showScreen(joinScreen);
 
-
-    window.history.replaceState(
-        {},
-        "",
-        "?room=" + roomId
-    );
-
+    joinError.textContent =
+        "招待された部屋です。「参加する」を押してください。";
 }
 
 
-roomText.textContent = roomId;
+// ==============================
+// URLコピー
+// ==============================
+
+document
+    .getElementById("copyButton")
+    .addEventListener("click", async () => {
+
+        const url =
+            shareUrl.textContent;
+
+        try {
+
+            await navigator.clipboard.writeText(url);
+
+            statusText.textContent =
+                "URLをコピーしました！";
+
+        } catch {
+
+            statusText.textContent =
+                "URLを選択してコピーしてください。";
+        }
+    });
 
 
-// 部屋に参加
+// ==============================
+// ゲーム画面準備
+// ==============================
 
-socket.emit(
-    "joinRoom",
-    roomId
-);
+function setupGameScreen() {
+
+    roomCodeDisplay.textContent =
+        currentRoomId;
+
+    resultArea.style.display =
+        "none";
+
+    rematchPressed = false;
+    isCharmed = false;
+
+    document.body.classList.remove(
+        "charmed"
+    );
+
+    guestChoiceInfo.textContent =
+        "ゲストはまだ選択していません";
+
+    charmButton.textContent =
+        "💗 魅了する";
+
+    charmInfo.textContent = "";
+}
 
 
-// =========================
-// ホスト / ゲスト判定
-// =========================
+// ==============================
+// ゲスト参加
+// ==============================
 
-socket.on("role", (role) => {
+socket.on("guestJoined", () => {
 
-    myRole = role;
+    statusText.textContent =
+        "ゲストが参加しました。ゲストの選択を待っています…";
 
-
-    if (role === "host") {
-
-        roleText.textContent =
-            "👑 あなたはホストです";
-
-        hostInfo.style.display =
-            "block";
-
-    }
-
-
-    if (role === "guest") {
-
-        roleText.textContent =
-            "あなたはゲストです";
-
-        hostInfo.style.display =
-            "none";
-
-    }
-
+    disableChoices();
 });
 
 
-// =========================
-// 人数
-// =========================
+// ==============================
+// ラウンド開始
+// ==============================
 
 socket.on(
-    "playerCount",
-    (count) => {
+    "roundStart",
+    data => {
 
-        if (count === 1) {
+        lastResult = null;
+        rematchPressed = false;
+        isCharmed = false;
 
-            statusText.textContent =
-                "相手を待っています。このURLを友達に送ってください。";
-
-            guestChoiceDisplay.textContent =
-                "ゲストはまだ選択していません";
-
-            resultText.textContent = "";
-
-            disableButtons();
-
-        }
-
-
-        if (count === 2) {
-
-            statusText.textContent =
-                "対戦相手が参加しました！";
-
-            resultText.textContent = "";
-
-            enableButtons();
-
-        }
-
-    }
-);
-
-
-// =========================
-// 選択
-// =========================
-
-buttons.forEach(
-    button => {
-
-        button.addEventListener(
-            "click",
-            () => {
-
-                const choice =
-                    button.dataset.choice;
-
-
-                socket.emit(
-                    "choose",
-                    {
-                        roomId,
-                        choice
-                    }
-                );
-
-
-                resultText.innerHTML =
-                    "あなたの選択：<strong>" +
-                    getName(choice) +
-                    "</strong>";
-
-
-                statusText.textContent =
-                    "相手を待っています…";
-
-
-                disableButtons();
-
-            }
+        document.body.classList.remove(
+            "charmed"
         );
 
+        resultArea.style.display =
+            "none";
+
+        rematchButton.disabled =
+            false;
+
+        rematchButton.textContent =
+            "🔄 もう一度対戦";
+
+        rematchStatus.textContent =
+            "";
+
+        guestChoiceInfo.textContent =
+            "ゲストはまだ選択していません";
+
+        charmButton.textContent =
+            "💗 魅了する";
+
+        charmInfo.textContent =
+            "";
+
+        removeCharmLock();
+
+        setNormalImages();
+
+
+        // ゲスト
+        if (data.role === "guest") {
+
+            charmButton.disabled = true;
+
+            statusText.textContent =
+                "あなたの種族を選択してください。";
+
+            enableChoices();
+        }
+
+
+        // ホスト
+        if (data.role === "host") {
+
+            statusText.textContent =
+                "ゲストが選択するのを待っています…";
+
+            disableChoices();
+
+            // ゲストが選ぶ前だけ魅了可能
+            charmButton.disabled =
+                false;
+        }
     }
 );
 
 
-// =========================
-// ホストだけゲストの手を見る
-// =========================
+// ==============================
+// 種族選択
+// ==============================
+
+choices.forEach(button => {
+
+    button.addEventListener(
+        "click",
+        () => {
+
+            const choice =
+                button.dataset.choice;
+
+            // 魅了中のゲストは魔族禁止
+            if (
+                myRole === "guest" &&
+                isCharmed &&
+                choice === "demon"
+            ) {
+                return;
+            }
+
+            socket.emit(
+                "choose",
+                choice
+            );
+
+            disableChoices();
+
+
+            if (myRole === "guest") {
+
+                statusText.textContent =
+                    "選択しました。ホストを待っています…";
+
+            } else {
+
+                statusText.textContent =
+                    "勝敗を判定しています…";
+            }
+        }
+    );
+});
+
+
+socket.on(
+    "choiceAccepted",
+    data => {
+
+        if (myRole === "guest") {
+
+            statusText.textContent =
+                "あなたは「" +
+                getName(data.choice) +
+                "」を選択しました。ホストを待っています…";
+        }
+    }
+);
+
+
+socket.on(
+    "choiceRejected",
+    message => {
+
+        statusText.textContent =
+            message;
+
+        if (
+            myRole === "guest" &&
+            isCharmed
+        ) {
+            enableChoices();
+        }
+    }
+);
+
+
+// ==============================
+// ホストだけゲストの選択を見る
+// ==============================
 
 socket.on(
     "guestChoice",
-    (choice) => {
+    choice => {
 
         if (myRole !== "host") {
             return;
         }
 
-
-        guestChoiceDisplay.innerHTML =
+        guestChoiceInfo.innerHTML =
             "ゲストの選択： " +
             getEmoji(choice) +
             " <strong>" +
             getName(choice) +
             "</strong>";
 
-
         statusText.textContent =
-            "ゲストが選択しました。あなたの手を選んでください。";
+            "ゲストが選択しました。あなたの種族を選んでください。";
 
+        // もう魅了は使えない
+        charmButton.disabled =
+            true;
 
-        enableButtons();
+        if (!isCharmed) {
 
+            charmInfo.textContent =
+                "ゲストが選択したため、魅了は使用できません。";
+        }
+
+        enableChoices();
     }
 );
 
 
-// =========================
+// ==============================
+// 💗 魅了ボタン
+// ==============================
+
+charmButton.addEventListener(
+    "click",
+    () => {
+
+        if (myRole !== "host") {
+            return;
+        }
+
+        charmButton.disabled =
+            true;
+
+        charmInfo.textContent =
+            "魅了を発動しています…";
+
+        socket.emit("useCharm");
+    }
+);
+
+
+// ==============================
+// 💗 魅了発動
+// ==============================
+
+socket.on(
+    "charmActivated",
+    data => {
+
+        isCharmed = true;
+
+        document.body.classList.add(
+            "charmed"
+        );
+
+        playCharmEffect();
+
+
+        // ゲスト
+        if (data.role === "guest") {
+
+            statusText.textContent =
+                "💗 魅了されました！ 人間か天使を選んでください。";
+
+            setCharmedImages();
+
+            enableChoices();
+        }
+
+
+        // ホスト
+        if (data.role === "host") {
+
+            charmButton.disabled =
+                true;
+
+            charmButton.textContent =
+                "💗 魅了発動済み";
+
+            charmInfo.textContent =
+                "ゲストは人間か天使しか選べません。";
+        }
+    }
+);
+
+
+// ==============================
+// 魅了エラー
+// ==============================
+
+socket.on(
+    "charmError",
+    message => {
+
+        charmInfo.textContent =
+            message;
+    }
+);
+
+
+// ==============================
+// ハート演出
+// ==============================
+
+function playCharmEffect() {
+
+    const flash =
+        document.getElementById(
+            "charmFlash"
+        );
+
+    flash.classList.remove(
+        "show"
+    );
+
+    void flash.offsetWidth;
+
+    flash.classList.add(
+        "show"
+    );
+
+
+    for (let i = 0; i < 30; i++) {
+
+        setTimeout(() => {
+
+            const heart =
+                document.createElement(
+                    "div"
+                );
+
+            heart.className =
+                "charm-heart";
+
+            const hearts = [
+                "♥",
+                "♡",
+                "💗",
+                "💕"
+            ];
+
+            heart.textContent =
+                hearts[
+                    Math.floor(
+                        Math.random() *
+                        hearts.length
+                    )
+                ];
+
+            heart.style.left =
+                Math.random() * 100 + "%";
+
+            heart.style.fontSize =
+                (
+                    20 +
+                    Math.random() * 35
+                ) + "px";
+
+            document.body.appendChild(
+                heart
+            );
+
+            setTimeout(() => {
+
+                heart.remove();
+
+            }, 4000);
+
+        }, i * 65);
+    }
+}
+
+
+// ==============================
+// 通常画像
+// ==============================
+
+function setNormalImages() {
+
+    const humanImage =
+        document.querySelector(
+            '[data-choice="human"] .character-image'
+        );
+
+    const angelImage =
+        document.querySelector(
+            '[data-choice="angel"] .character-image'
+        );
+
+    const demonImage =
+        document.querySelector(
+            '[data-choice="demon"] .character-image'
+        );
+
+
+    demonImage.src =
+        "images/demon.png";
+
+
+    // ホストだけ人間画像が違う
+    if (myRole === "host") {
+
+        humanImage.src =
+            "images/host_human.png";
+
+    } else {
+
+        humanImage.src =
+            "images/human.png";
+    }
+
+
+    angelImage.src =
+        "images/angel.png";
+}
+
+
+// ==============================
+// 魅了画像
+// ==============================
+
+function setCharmedImages() {
+
+    if (myRole !== "guest") {
+        return;
+    }
+
+    const humanImage =
+        document.querySelector(
+            '[data-choice="human"] .character-image'
+        );
+
+    const angelImage =
+        document.querySelector(
+            '[data-choice="angel"] .character-image'
+        );
+
+    humanImage.src =
+        "images/human_charmed.png";
+
+    angelImage.src =
+        "images/angel_charmed.png";
+
+
+    const demonButton =
+        document.querySelector(
+            '[data-choice="demon"]'
+        );
+
+    demonButton.disabled =
+        true;
+
+    demonButton.classList.add(
+        "charm-locked"
+    );
+}
+
+
+// ==============================
+// 魅了ロック解除
+// ==============================
+
+function removeCharmLock() {
+
+    const demonButton =
+        document.querySelector(
+            '[data-choice="demon"]'
+        );
+
+    demonButton.classList.remove(
+        "charm-locked"
+    );
+}
+
+
+// ==============================
 // 結果
-// =========================
+// ==============================
 
 socket.on(
     "result",
-    (data) => {
+    data => {
 
-        const you =
-            data.you;
+        lastResult = data;
 
-        const opponent =
-            data.opponent;
+        disableChoices();
+
+        charmButton.disabled =
+            true;
+
+        playBattleAnimation(
+            data.you,
+            data.opponent,
+            data.charmed
+        );
+    }
+);
 
 
-        let message;
+// ==============================
+// バトル演出
+// ==============================
+
+async function playBattleAnimation(
+    you,
+    opponent,
+    charmed
+) {
+
+    const overlay =
+        document.getElementById(
+            "battleOverlay"
+        );
+
+    const countdown =
+        document.getElementById(
+            "countdown"
+        );
+
+    const versus =
+        document.getElementById(
+            "versus"
+        );
+
+    const finalResult =
+        document.getElementById(
+            "finalResult"
+        );
+
+    const yourImage =
+        document.getElementById(
+            "yourBattleImage"
+        );
+
+    const opponentImage =
+        document.getElementById(
+            "opponentBattleImage"
+        );
 
 
-        if (you === opponent) {
+    overlay.classList.add(
+        "show"
+    );
 
-            message =
-                "引き分け！";
+    versus.style.display =
+        "none";
 
+    finalResult.style.display =
+        "none";
+
+
+    for (
+        const number of ["3", "2", "1"]
+    ) {
+
+        countdown.style.display =
+            "block";
+
+        countdown.textContent =
+            number;
+
+        countdown.style.animation =
+            "none";
+
+        void countdown.offsetWidth;
+
+        countdown.style.animation =
+            "pulse 0.5s ease";
+
+        await wait(650);
+    }
+
+
+    countdown.style.display =
+        "none";
+
+
+    // 自分側の画像
+    yourImage.src =
+        getBattleImage(
+            you,
+            myRole,
+            charmed
+        );
+
+
+    // 相手側の役割
+    const opponentRole =
+        myRole === "host"
+            ? "guest"
+            : "host";
+
+
+    opponentImage.src =
+        getBattleImage(
+            opponent,
+            opponentRole,
+            charmed
+        );
+
+
+    document
+        .getElementById(
+            "yourBattleName"
+        )
+        .textContent =
+        "あなた：" +
+        getName(you);
+
+
+    document
+        .getElementById(
+            "opponentBattleName"
+        )
+        .textContent =
+        "相手：" +
+        getName(opponent);
+
+
+    versus.style.display =
+        "block";
+
+    await wait(1300);
+
+
+    const result =
+        judge(
+            you,
+            opponent
+        );
+
+
+    finalResult.style.display =
+        "block";
+
+
+    if (result === "win") {
+
+        finalResult.textContent =
+            "WIN!";
+    }
+
+
+    if (result === "lose") {
+
+        finalResult.textContent =
+            "LOSE...";
+    }
+
+
+    if (result === "draw") {
+
+        finalResult.textContent =
+            "DRAW";
+    }
+
+
+    await wait(1700);
+
+    overlay.classList.remove(
+        "show"
+    );
+
+
+    showResult(
+        you,
+        opponent,
+        result
+    );
+}
+
+
+// ==============================
+// バトル用画像判定
+// ==============================
+
+function getBattleImage(
+    choice,
+    role,
+    charmed
+) {
+
+    // 魔族
+    if (choice === "demon") {
+
+        return "images/demon.png";
+    }
+
+
+    // 人間
+    if (choice === "human") {
+
+        // ホスト専用人間
+        if (role === "host") {
+
+            return "images/host_human.png";
         }
 
-        else if (
-
-            (you === "demon" &&
-             opponent === "human") ||
-
-            (you === "human" &&
-             opponent === "angel") ||
-
-            (you === "angel" &&
-             opponent === "demon")
-
+        // 魅了されたゲスト
+        if (
+            role === "guest" &&
+            charmed
         ) {
 
-            message =
-                "🎉 あなたの勝ち！";
-
+            return "images/human_charmed.png";
         }
 
-        else {
+        // 通常ゲスト
+        return "images/human.png";
+    }
 
-            message =
-                "あなたの負け！";
 
+    // 天使
+    if (choice === "angel") {
+
+        // 魅了されたゲスト
+        if (
+            role === "guest" &&
+            charmed
+        ) {
+
+            return "images/angel_charmed.png";
         }
 
-
-        resultText.innerHTML =
-
-            '<div class="result-characters">' +
-
-            getEmoji(you) +
-
-            "　VS　" +
-
-            getEmoji(opponent) +
-
-            "</div>" +
-
-            "あなた：" +
-            getName(you) +
-
-            "<br>" +
-
-            "相手：" +
-            getName(opponent) +
-
-            "<br><br>" +
-
-            message;
+        return "images/angel.png";
+    }
 
 
-        statusText.textContent =
-            "次の勝負ができます！";
+    return "";
+}
+
+
+// ==============================
+// 結果表示
+// ==============================
+
+function showResult(
+    you,
+    opponent,
+    result
+) {
+
+    let message = "";
+
+
+    if (result === "win") {
+
+        message =
+            "🎉 あなたの勝ち！";
+    }
+
+
+    if (result === "lose") {
+
+        message =
+            "あなたの負け！";
+    }
+
+
+    if (result === "draw") {
+
+        message =
+            "引き分け！";
+    }
+
+
+    resultText.innerHTML =
+
+        getEmoji(you) +
+        " あなた：" +
+        getName(you) +
+
+        "<br>" +
+
+        "VS" +
+
+        "<br>" +
+
+        getEmoji(opponent) +
+        " 相手：" +
+        getName(opponent) +
+
+        "<br><br>" +
+
+        message;
+
+
+    resultArea.style.display =
+        "block";
+
+    statusText.textContent =
+        "対戦終了";
+}
+
+
+// ==============================
+// 再戦
+// ==============================
+
+rematchButton.addEventListener(
+    "click",
+    () => {
+
+        if (rematchPressed) {
+            return;
+        }
+
+        rematchPressed =
+            true;
+
+        rematchButton.disabled =
+            true;
+
+        rematchButton.textContent =
+            "準備完了 ✓";
+
+        rematchStatus.textContent =
+            "相手の準備を待っています…";
+
+        socket.emit(
+            "rematchReady"
+        );
+    }
+);
+
+
+socket.on(
+    "rematchStatus",
+    data => {
+
+        if (
+            data.hostReady &&
+            data.guestReady
+        ) {
+
+            rematchStatus.textContent =
+                "両者準備完了！";
+
+            return;
+        }
 
 
         if (myRole === "host") {
 
-            guestChoiceDisplay.textContent =
-                "ゲストはまだ選択していません";
+            if (data.guestReady) {
 
+                rematchStatus.textContent =
+                    "ゲストは準備完了しています。";
+            }
+
+        } else {
+
+            if (data.hostReady) {
+
+                rematchStatus.textContent =
+                    "ホストは準備完了しています。";
+            }
         }
-
-
-        enableButtons();
-
     }
 );
 
 
-// =========================
-// その他
-// =========================
+// ==============================
+// 切断
+// ==============================
 
 socket.on(
-    "roomFull",
+    "guestLeft",
     () => {
 
-        statusText.textContent =
-            "この部屋は満員です。";
+        disableChoices();
 
-        disableButtons();
+        resultArea.style.display =
+            "none";
 
-    }
-);
-
-
-socket.on(
-    "guestDisconnected",
-    () => {
-
-        statusText.textContent =
-            "ゲストが退出しました。";
-
-        guestChoiceDisplay.textContent =
+        guestChoiceInfo.textContent =
             "ゲストはまだ選択していません";
 
-        resultText.textContent = "";
+        charmButton.disabled =
+            true;
 
-        disableButtons();
+        charmButton.textContent =
+            "💗 魅了する";
 
+        charmInfo.textContent =
+            "";
+
+        isCharmed = false;
+
+        document.body.classList.remove(
+            "charmed"
+        );
+
+        removeCharmLock();
+
+        setNormalImages();
+
+        statusText.textContent =
+            "ゲストが退出しました。新しいゲストを待っています…";
     }
 );
 
 
 socket.on(
-    "hostDisconnected",
-    () => {
+    "roomClosed",
+    message => {
 
-        statusText.textContent =
-            "ホストが退出したため、部屋が終了しました。";
+        disableChoices();
 
-        resultText.textContent = "";
+        alert(message);
 
-        disableButtons();
-
+        window.location.href =
+            window.location.origin;
     }
 );
 
 
-// =========================
+// ==============================
+// 勝敗判定
+// ==============================
+
+function judge(
+    you,
+    opponent
+) {
+
+    if (you === opponent) {
+
+        return "draw";
+    }
+
+
+    if (
+        (
+            you === "demon" &&
+            opponent === "human"
+        )
+        ||
+        (
+            you === "human" &&
+            opponent === "angel"
+        )
+        ||
+        (
+            you === "angel" &&
+            opponent === "demon"
+        )
+    ) {
+
+        return "win";
+    }
+
+
+    return "lose";
+}
+
+
+// ==============================
 // 名前
-// =========================
+// ==============================
 
 function getName(choice) {
 
@@ -872,9 +2322,12 @@ function getName(choice) {
     }
 
     return "";
-
 }
 
+
+// ==============================
+// 絵文字
+// ==============================
 
 function getEmoji(choice) {
 
@@ -891,34 +2344,74 @@ function getEmoji(choice) {
     }
 
     return "";
-
 }
 
 
-function enableButtons() {
+// ==============================
+// 選択肢を有効化
+// ==============================
 
-    buttons.forEach(
-        button => {
-            button.disabled = false;
-        }
-    );
+function enableChoices() {
 
+    choices.forEach(button => {
+
+        button.disabled =
+            false;
+    });
+
+
+    // 魅了されたゲストだけ
+    // 魔族を再度ロック
+    if (
+        myRole === "guest" &&
+        isCharmed
+    ) {
+
+        const demonButton =
+            document.querySelector(
+                '[data-choice="demon"]'
+            );
+
+        demonButton.disabled =
+            true;
+
+        demonButton.classList.add(
+            "charm-locked"
+        );
+    }
 }
 
 
-function disableButtons() {
+// ==============================
+// 選択肢を無効化
+// ==============================
 
-    buttons.forEach(
-        button => {
-            button.disabled = true;
-        }
-    );
+function disableChoices() {
 
+    choices.forEach(button => {
+
+        button.disabled =
+            true;
+    });
+}
+
+
+// ==============================
+// 待機
+// ==============================
+
+function wait(ms) {
+
+    return new Promise(resolve => {
+
+        setTimeout(
+            resolve,
+            ms
+        );
+    });
 }
 
 </script>
 
-
 </body>
-
 </html>
