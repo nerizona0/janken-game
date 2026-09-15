@@ -20,6 +20,11 @@
     box-sizing: border-box;
 }
 
+
+/* ========================================
+   背景
+======================================== */
+
 body {
 
     margin: 0;
@@ -31,14 +36,6 @@ body {
         "Hiragino Kaku Gothic ProN",
         sans-serif;
 
-    background:
-        radial-gradient(
-            circle at top,
-            #38245e 0%,
-            #171222 45%,
-            #09070d 100%
-        );
-
     color: white;
 
     display: flex;
@@ -48,31 +45,101 @@ body {
 
     overflow-x: hidden;
 
+    background:
+        linear-gradient(
+            rgba(5, 2, 10, 0.58),
+            rgba(10, 3, 15, 0.72)
+        ),
+        url("/images/background.png");
+
+    background-size: cover;
+
+    background-position: center;
+
+    background-repeat: no-repeat;
+
+    background-attachment: fixed;
+
     transition:
-        background 0.6s ease,
+        background-color 0.6s ease,
         box-shadow 0.6s ease;
 }
 
 
 /* ========================================
-   魅了背景
+   背景の暗いオーバーレイ
 ======================================== */
 
-body.charmed {
+body::before {
+
+    content: "";
+
+    position: fixed;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    z-index: 0;
 
     background:
         radial-gradient(
-            circle at top,
-            #8b2d70 0%,
-            #401936 45%,
-            #140914 100%
+            circle at center,
+            rgba(80, 25, 100, 0.04) 0%,
+            rgba(10, 3, 15, 0.25) 55%,
+            rgba(0, 0, 0, 0.58) 100%
         );
-
-    box-shadow:
-        inset 0 0 100px
-        rgba(255, 80, 180, 0.25);
 }
 
+
+/* ========================================
+   魅了時のピンク侵食
+======================================== */
+
+body::after {
+
+    content: "";
+
+    position: fixed;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    z-index: 1;
+
+    opacity: 0;
+
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(255, 70, 180, 0.22),
+            rgba(120, 20, 90, 0.16),
+            rgba(20, 3, 20, 0.12)
+        );
+
+    transition:
+        opacity 0.6s ease;
+}
+
+
+body.charmed::after {
+
+    opacity: 1;
+}
+
+
+body.charmed {
+
+    box-shadow:
+        inset 0 0 120px
+        rgba(255, 60, 170, 0.32);
+}
+
+
+/* ========================================
+   メイン
+======================================== */
 
 .container {
 
@@ -105,7 +172,6 @@ h1 {
 
 
 h2 {
-
     margin-top: 10px;
 }
 
@@ -119,13 +185,11 @@ h2 {
 
 
 .screen {
-
     display: none;
 }
 
 
 .screen.active {
-
     display: block;
 }
 
@@ -188,6 +252,10 @@ button:disabled {
 }
 
 
+/* ========================================
+   入力
+======================================== */
+
 input {
 
     width:
@@ -203,20 +271,21 @@ input {
     border-radius: 10px;
 
     background:
-        rgba(255, 255, 255, 0.08);
+        rgba(0, 0, 0, 0.35);
 
     color: white;
 
     font-size: 16px;
 
     outline: none;
+
+    backdrop-filter:
+        blur(8px);
 }
 
 
 input:focus {
-
-    border-color:
-        #b98cff;
+    border-color: #b98cff;
 }
 
 
@@ -252,6 +321,10 @@ input:focus {
 }
 
 
+/* ========================================
+   部屋情報
+======================================== */
+
 .room-info {
 
     margin:
@@ -264,7 +337,14 @@ input:focus {
     border-radius: 14px;
 
     background:
-        rgba(255, 255, 255, 0.07);
+        rgba(5, 2, 10, 0.62);
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.1);
+
+    backdrop-filter:
+        blur(8px);
 }
 
 
@@ -306,6 +386,9 @@ input:focus {
     font-size: 20px;
 
     font-weight: bold;
+
+    text-shadow:
+        0 2px 10px black;
 }
 
 
@@ -339,11 +422,14 @@ input:focus {
     border-radius: 22px;
 
     background:
-        rgba(255, 255, 255, 0.07);
+        rgba(10, 5, 15, 0.62);
 
     border:
         1px solid
-        rgba(255, 255, 255, 0.12);
+        rgba(255, 255, 255, 0.13);
+
+    backdrop-filter:
+        blur(7px);
 
     cursor: pointer;
 
@@ -362,11 +448,11 @@ input:focus {
         scale(1.03);
 
     background:
-        rgba(255, 255, 255, 0.12);
+        rgba(50, 20, 65, 0.72);
 
     box-shadow:
         0 12px 35px
-        rgba(0, 0, 0, 0.35);
+        rgba(0, 0, 0, 0.5);
 }
 
 
@@ -425,7 +511,7 @@ input:focus {
     filter:
         drop-shadow(
             0 10px 15px
-            rgba(0, 0, 0, 0.45)
+            rgba(0, 0, 0, 0.55)
         );
 
     animation:
@@ -440,16 +526,12 @@ input:focus {
 
 
 .choice:nth-child(2) img {
-
-    animation-delay:
-        -0.65s;
+    animation-delay: -0.65s;
 }
 
 
 .choice:nth-child(3) img {
-
-    animation-delay:
-        -1.3s;
+    animation-delay: -1.3s;
 }
 
 
@@ -491,11 +573,14 @@ input:focus {
     border-radius: 18px;
 
     background:
-        rgba(255, 255, 255, 0.07);
+        rgba(5, 2, 10, 0.68);
 
     border:
         1px solid
         rgba(255, 255, 255, 0.1);
+
+    backdrop-filter:
+        blur(9px);
 }
 
 
@@ -537,7 +622,7 @@ input:focus {
 
 
 /* ========================================
-   ★ ゲスト画像変更パネル
+   ゲスト画像変更
 ======================================== */
 
 .guest-image-control {
@@ -616,6 +701,43 @@ input:focus {
     font-size: 14px;
 
     opacity: 0.8;
+}
+
+
+/* ========================================
+   BGMボタン
+======================================== */
+
+#bgmButton {
+
+    position: fixed;
+
+    right: 18px;
+
+    bottom: 18px;
+
+    z-index: 1000;
+
+    padding:
+        10px 16px;
+
+    font-size: 14px;
+
+    border-radius: 999px;
+
+    background:
+        rgba(10, 5, 15, 0.75);
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.18);
+
+    backdrop-filter:
+        blur(10px);
+
+    box-shadow:
+        0 5px 20px
+        rgba(0, 0, 0, 0.4);
 }
 
 
@@ -731,7 +853,6 @@ input:focus {
     }
 
     20% {
-
         opacity: 1;
     }
 
@@ -766,14 +887,16 @@ input:focus {
     flex-direction: column;
 
     background:
-        rgba(5, 3, 10, 0.94);
+        rgba(5, 3, 10, 0.92);
 
     z-index: 500;
+
+    backdrop-filter:
+        blur(8px);
 }
 
 
 #battleOverlay.show {
-
     display: flex;
 }
 
@@ -846,9 +969,7 @@ input:focus {
 
 
 .fighter:last-child img {
-
-    animation-delay:
-        -0.9s;
+    animation-delay: -0.9s;
 }
 
 
@@ -928,25 +1049,21 @@ input:focus {
 
 
     .choice img {
-
         height: 150px;
     }
 
 
     .choices {
-
         gap: 8px;
     }
 
 
     .choice-name {
-
         font-size: 18px;
     }
 
 
     #battleArea {
-
         gap: 10px;
     }
 
@@ -960,8 +1077,20 @@ input:focus {
 
 
     .image-change-buttons {
-
         flex-direction: column;
+    }
+
+
+    #bgmButton {
+
+        right: 10px;
+
+        bottom: 10px;
+
+        padding:
+            8px 12px;
+
+        font-size: 12px;
     }
 }
 
@@ -971,6 +1100,25 @@ input:focus {
 
 
 <body>
+
+
+<!-- =====================================
+     BGM
+===================================== -->
+
+<audio
+    id="bgm"
+    src="/audio/bgm.mp3"
+    loop
+    preload="auto"
+></audio>
+
+
+<button id="bgmButton">
+
+    🔊 BGM ON
+
+</button>
 
 
 <div id="charmFlash">
@@ -1164,8 +1312,6 @@ input:focus {
         <div id="charmInfo"></div>
 
 
-        <!-- ★ ゲスト画像変更 -->
-
         <div class="guest-image-control">
 
 
@@ -1232,8 +1378,6 @@ input:focus {
     <div class="choices">
 
 
-        <!-- 魔族 -->
-
         <div
             class="choice"
             data-choice="demon"
@@ -1256,8 +1400,6 @@ input:focus {
         </div>
 
 
-        <!-- 人間 -->
-
         <div
             class="choice"
             data-choice="human"
@@ -1279,8 +1421,6 @@ input:focus {
 
         </div>
 
-
-        <!-- 天使 -->
 
         <div
             class="choice"
@@ -1314,7 +1454,7 @@ input:focus {
 
 
 <!-- =====================================
-     VS
+     VS画面
 ===================================== -->
 
 <div id="battleOverlay">
@@ -1583,6 +1723,132 @@ const charmFlash =
 
 
 /* ========================================
+   ★ BGM
+======================================== */
+
+const bgm =
+    document.getElementById(
+        "bgm"
+    );
+
+
+const bgmButton =
+    document.getElementById(
+        "bgmButton"
+    );
+
+
+/*
+    BGM音量
+
+    0.12 = 12%
+*/
+
+bgm.volume = 0.12;
+
+
+let bgmStarted = false;
+
+let bgmEnabled = true;
+
+
+/* ========================================
+   BGM開始
+======================================== */
+
+function startBgm() {
+
+    if (
+        !bgmEnabled
+    ) {
+        return;
+    }
+
+
+    if (
+        bgmStarted &&
+        !bgm.paused
+    ) {
+        return;
+    }
+
+
+    bgm.play()
+        .then(() => {
+
+            bgmStarted = true;
+
+            bgmButton.textContent =
+                "🔊 BGM ON";
+        })
+        .catch(() => {
+
+            /*
+                ブラウザが自動再生を
+                ブロックした場合は
+                次のクリックで再試行
+            */
+
+        });
+}
+
+
+/* ========================================
+   BGM ON / OFF
+======================================== */
+
+bgmButton.addEventListener(
+    "click",
+    event => {
+
+        event.stopPropagation();
+
+
+        if (
+            bgmEnabled
+        ) {
+
+            bgmEnabled = false;
+
+            bgm.pause();
+
+            bgmButton.textContent =
+                "🔇 BGM OFF";
+
+        } else {
+
+            bgmEnabled = true;
+
+            startBgm();
+
+            bgmButton.textContent =
+                "🔊 BGM ON";
+        }
+    }
+);
+
+
+/*
+    最初のユーザー操作で
+    BGMを開始する
+*/
+
+document.addEventListener(
+    "click",
+    () => {
+
+        if (
+            bgmEnabled &&
+            !bgmStarted
+        ) {
+
+            startBgm();
+        }
+    }
+);
+
+
+/* ========================================
    状態
 ======================================== */
 
@@ -1594,11 +1860,6 @@ let isCharmed = false;
 
 let ambientHeartTimer = null;
 
-
-/*
-    false = A
-    true  = B
-*/
 
 let guestImages = {
 
@@ -1614,12 +1875,15 @@ let guestImages = {
 
 function showScreen(screen) {
 
-    screens.forEach(s => {
+    screens.forEach(
+        s => {
 
-        s.classList.remove(
-            "active"
-        );
-    });
+            s.classList.remove(
+                "active"
+            );
+        }
+    );
+
 
     screen.classList.add(
         "active"
@@ -1642,6 +1906,8 @@ document
             createError.textContent =
                 "";
 
+            startBgm();
+
             showScreen(
                 createScreen
             );
@@ -1659,6 +1925,8 @@ document
 
             joinError.textContent =
                 "";
+
+            startBgm();
 
             showScreen(
                 joinScreen
@@ -1709,6 +1977,9 @@ document
         "click",
         () => {
 
+            startBgm();
+
+
             const password =
                 document
                     .getElementById(
@@ -1716,8 +1987,10 @@ document
                     )
                     .value;
 
+
             createError.textContent =
                 "";
+
 
             socket.emit(
                 "createRoom",
@@ -1739,6 +2012,9 @@ document
         "click",
         () => {
 
+            startBgm();
+
+
             const id =
                 document
                     .getElementById(
@@ -1748,8 +2024,10 @@ document
                     .trim()
                     .toUpperCase();
 
+
             joinError.textContent =
                 "";
+
 
             socket.emit(
                 "joinRoom",
@@ -1784,6 +2062,7 @@ if (roomFromUrl) {
         .value =
         roomFromUrl.toUpperCase();
 
+
     showScreen(
         joinScreen
     );
@@ -1809,6 +2088,7 @@ choices.forEach(
                 ) {
                     return;
                 }
+
 
                 const selected =
                     choice.dataset.choice;
@@ -1884,6 +2164,7 @@ function enableChoices() {
                 '[data-choice="demon"]'
             );
 
+
         demon.classList.add(
             "disabled",
             "charm-locked"
@@ -1893,12 +2174,13 @@ function enableChoices() {
 
 
 /* ========================================
-   ★ ゲスト画像取得
+   ゲスト通常画像
 ======================================== */
 
 function getGuestNormalImage(
     choice
 ) {
+
 
     if (
         choice === "demon"
@@ -1941,13 +2223,14 @@ function getGuestNormalImage(
 
 
 /* ========================================
-   通常カード画像設定
+   通常画像
 ======================================== */
 
 function setNormalImages() {
 
+
     /*
-        ホスト側は変更しない
+        ホスト
     */
 
     if (
@@ -1957,18 +2240,21 @@ function setNormalImages() {
         demonImage.src =
             "/images/demon.png";
 
+
         humanImage.src =
             "/images/host_human.png";
 
+
         angelImage.src =
             "/images/angel.png";
+
 
         return;
     }
 
 
     /*
-        ゲスト側だけA/B反映
+        ゲスト
     */
 
     demonImage.src =
@@ -1976,10 +2262,12 @@ function setNormalImages() {
             "demon"
         );
 
+
     humanImage.src =
         getGuestNormalImage(
             "human"
         );
+
 
     angelImage.src =
         getGuestNormalImage(
@@ -1994,20 +2282,13 @@ function setNormalImages() {
 
 function setCharmedImages() {
 
+
     if (
         myRole !== "guest"
     ) {
         return;
     }
 
-
-    /*
-        魔族はA/B画像のまま。
-        ただし選択不可。
-
-        人間・天使は
-        魅了専用画像を優先。
-    */
 
     demonImage.src =
         getGuestNormalImage(
@@ -2025,7 +2306,7 @@ function setCharmedImages() {
 
 
 /* ========================================
-   ★ ホストの画像変更ボタン
+   ゲスト画像変更ボタン
 ======================================== */
 
 imageChangeButtons.forEach(
@@ -2040,6 +2321,7 @@ imageChangeButtons.forEach(
                 ) {
                     return;
                 }
+
 
                 const choice =
                     button.dataset
@@ -2057,13 +2339,15 @@ imageChangeButtons.forEach(
 
 
 /* ========================================
-   ★ 画像変更ボタン表示更新
+   画像変更ボタン更新
 ======================================== */
 
 function updateImageChangeButtons() {
 
+
     imageChangeButtons.forEach(
         button => {
+
 
             const choice =
                 button.dataset
@@ -2080,21 +2364,27 @@ function updateImageChangeButtons() {
             if (
                 choice === "demon"
             ) {
-                name = "😈 魔族";
+
+                name =
+                    "😈 魔族";
             }
 
 
             if (
                 choice === "human"
             ) {
-                name = "👤 人間";
+
+                name =
+                    "👤 人間";
             }
 
 
             if (
                 choice === "angel"
             ) {
-                name = "👼 天使";
+
+                name =
+                    "👼 天使";
             }
 
 
@@ -2112,12 +2402,13 @@ function updateImageChangeButtons() {
 
 
 /* ========================================
-   ★ サーバーから画像変更通知
+   画像変更通知
 ======================================== */
 
 socket.on(
     "guestImageChanged",
     data => {
+
 
         guestImages = {
             ...data.guestImages
@@ -2127,15 +2418,14 @@ socket.on(
         updateImageChangeButtons();
 
 
-        /*
-            ゲスト画面だけ画像変更
-        */
-
         if (
             myRole === "guest"
         ) {
 
-            if (isCharmed) {
+
+            if (
+                isCharmed
+            ) {
 
                 setCharmedImages();
 
@@ -2146,13 +2436,10 @@ socket.on(
         }
 
 
-        /*
-            ホストには変更結果を表示
-        */
-
         if (
             myRole === "host"
         ) {
+
 
             const name =
                 getChoiceName(
@@ -2178,13 +2465,14 @@ function getBattleImage(
 ) {
 
 
-    /* ====================================
-       ホスト
-    ==================================== */
+    /*
+        ホスト
+    */
 
     if (
         role === "host"
     ) {
+
 
         if (
             choice === "demon"
@@ -2211,20 +2499,19 @@ function getBattleImage(
     }
 
 
-    /* ====================================
-       ゲスト
-    ==================================== */
+    /*
+        ゲスト
+    */
 
     if (
         role === "guest"
     ) {
 
 
-        /*
-            魅了されたゲスト
-        */
+        if (
+            charmed
+        ) {
 
-        if (charmed) {
 
             if (
                 choice === "human"
@@ -2242,10 +2529,6 @@ function getBattleImage(
             }
         }
 
-
-        /*
-            通常ゲスト
-        */
 
         return getGuestNormalImage(
             choice
@@ -2265,9 +2548,11 @@ function getChoiceName(
     choice
 ) {
 
+
     if (
         choice === "demon"
     ) {
+
         return "魔族";
     }
 
@@ -2275,6 +2560,7 @@ function getChoiceName(
     if (
         choice === "human"
     ) {
+
         return "人間";
     }
 
@@ -2282,6 +2568,7 @@ function getChoiceName(
     if (
         choice === "angel"
     ) {
+
         return "天使";
     }
 
@@ -2298,6 +2585,7 @@ function getResult(
     you,
     opponent
 ) {
+
 
     if (
         you === opponent
@@ -2346,6 +2634,7 @@ charmButton.addEventListener(
     "click",
     () => {
 
+
         if (
             myRole !== "host"
         ) {
@@ -2369,10 +2658,11 @@ charmButton.addEventListener(
 
 
 /* ========================================
-   ハート
+   ハート作成
 ======================================== */
 
 function createHeart() {
+
 
     const heart =
         document.createElement(
@@ -2452,6 +2742,7 @@ function createHeart() {
 
 function playCharmExplosion() {
 
+
     charmFlash.classList.remove(
         "show"
     );
@@ -2484,6 +2775,7 @@ function playCharmExplosion() {
 ======================================== */
 
 function playHostCharmEffect() {
+
 
     charmFlash.classList.remove(
         "show"
@@ -2518,12 +2810,14 @@ function playHostCharmEffect() {
 
 function startAmbientHearts() {
 
+
     stopAmbientHearts();
 
 
     ambientHeartTimer =
         setInterval(
             () => {
+
 
                 if (
                     isCharmed &&
@@ -2542,9 +2836,11 @@ function startAmbientHearts() {
 
 function stopAmbientHearts() {
 
+
     if (
         ambientHeartTimer
     ) {
+
 
         clearInterval(
             ambientHeartTimer
@@ -2563,7 +2859,9 @@ function stopAmbientHearts() {
 
 function stopCharmMode() {
 
-    isCharmed = false;
+
+    isCharmed =
+        false;
 
 
     document.body
@@ -2599,6 +2897,7 @@ function stopCharmMode() {
 socket.on(
     "roomCreated",
     data => {
+
 
         myRole =
             "host";
@@ -2675,6 +2974,7 @@ socket.on(
 socket.on(
     "roomJoined",
     data => {
+
 
         myRole =
             "guest";
@@ -2756,6 +3056,7 @@ socket.on(
     "roundStart",
     data => {
 
+
         if (
             data.guestImages
         ) {
@@ -2803,6 +3104,7 @@ socket.on(
             myRole === "guest"
         ) {
 
+
             statusText.textContent =
                 "魔族・人間・天使から選んでください";
 
@@ -2810,6 +3112,7 @@ socket.on(
             enableChoices();
 
         } else {
+
 
             statusText.textContent =
                 "ゲストが選択するまで待ってください";
@@ -2837,6 +3140,7 @@ socket.on(
     "guestChoice",
     choice => {
 
+
         if (
             myRole !== "host"
         ) {
@@ -2862,16 +3166,18 @@ socket.on(
 
 
 /* ========================================
-   魅了
+   魅了発動
 ======================================== */
 
 socket.on(
     "charmActivated",
     data => {
 
+
         if (
             myRole === "guest"
         ) {
+
 
             isCharmed =
                 true;
@@ -2905,6 +3211,7 @@ socket.on(
             myRole === "host"
         ) {
 
+
             charmButton.disabled =
                 true;
 
@@ -2931,6 +3238,7 @@ socket.on(
     "charmError",
     message => {
 
+
         charmInfo.textContent =
             message;
 
@@ -2948,6 +3256,7 @@ socket.on(
 socket.on(
     "choiceRejected",
     message => {
+
 
         statusText.textContent =
             message;
@@ -2972,6 +3281,7 @@ socket.on(
     "choiceAccepted",
     data => {
 
+
         if (
             myRole === "guest"
         ) {
@@ -2995,6 +3305,7 @@ socket.on(
 socket.on(
     "result",
     data => {
+
 
         disableChoices();
 
@@ -3059,6 +3370,7 @@ function showBattle(
     result
 ) {
 
+
     battleOverlay
         .classList
         .add(
@@ -3093,6 +3405,7 @@ function showBattle(
         setInterval(
             () => {
 
+
                 number--;
 
 
@@ -3119,6 +3432,7 @@ function showBattle(
                 setTimeout(
                     () => {
 
+
                         countdown.style.display =
                             "none";
 
@@ -3129,6 +3443,7 @@ function showBattle(
 
                         setTimeout(
                             () => {
+
 
                                 battleResult.textContent =
                                     result;
@@ -3193,6 +3508,7 @@ rematchButton
         "click",
         () => {
 
+
             rematchButton.disabled =
                 true;
 
@@ -3211,6 +3527,7 @@ rematchButton
 socket.on(
     "rematchStatus",
     data => {
+
 
         if (
             data.hostReady &&
@@ -3236,6 +3553,7 @@ socket.on(
 socket.on(
     "guestLeft",
     () => {
+
 
         if (
             myRole !== "host"
@@ -3267,6 +3585,7 @@ socket.on(
 socket.on(
     "roomClosed",
     message => {
+
 
         alert(
             message
